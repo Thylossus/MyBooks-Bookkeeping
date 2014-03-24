@@ -28,19 +28,10 @@ public class Controller extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        URLProber up = new URLProber(request.getRequestURI());
-        request.setAttribute("url", up);
-        
-        String view;
-        
-        if (up.isCommand()) {
-            Command command  = CommandFactory.createCommand(request, response);
-        
-            view = command.execute();
-        } else {
-            view = up.getResourceLocation();
-        }
-        
+        Command command  = CommandFactory.createCommand(request, response);
+
+        String view = command.execute();
+
         RequestDispatcher rd = request.getRequestDispatcher(view);
         rd.forward(request, response);
     }

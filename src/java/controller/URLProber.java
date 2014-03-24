@@ -54,7 +54,7 @@ public class URLProber {
     private String getCommandResourceLocation (String url) {
         //Remove unnecessary command location ("MyBooks-Bookkeeping/website")
         //and transform to lower case
-        url = url.replaceFirst("/MyBooks-Bookkeeping/website/", "")
+        url = url.replaceFirst("/MyBooks-Bookkeeping/", "")
                  .toLowerCase();
 
         //Check whether URL is empty
