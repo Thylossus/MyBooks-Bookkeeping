@@ -17,11 +17,28 @@
 
 package commands;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  *
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  * @version
  */
-public class About {
+public class About extends Command{
 
+    public About (HttpServletRequest request, HttpServletResponse response) {
+        super(request, response);        
+        this.viewFile = "/about.jsp";
+    }
+    
+    /**
+     * Executes the command and returns the location of the view.
+     * @return The relative location of the view's JSP file.
+     */
+    @Override
+    public String execute() {        
+        return this.viewPath + this.viewFile;
+    }
+    
 }

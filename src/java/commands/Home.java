@@ -32,6 +32,10 @@ public class Home extends Command{
         this.viewFile = "/home.jsp";
     }
     
+    /**
+     * Executes the command and returns the location of the view.
+     * @return The relative location of the view's JSP file.
+     */
     @Override
     public String execute() {        
         return this.viewPath + this.viewFile;

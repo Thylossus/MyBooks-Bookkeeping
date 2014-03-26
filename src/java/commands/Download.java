@@ -17,11 +17,28 @@
 
 package commands;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 /**
  *
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  * @version
  */
-public class Download {
+public class Download extends Command{
 
+    public Download (HttpServletRequest request, HttpServletResponse response) {
+        super(request, response);        
+        this.viewFile = "/download.jsp";
+    }
+    
+    /**
+     * Executes the command and returns the location of the view.
+     * @return The relative location of the view's JSP file.
+     */
+    @Override
+    public String execute() {        
+        return this.viewPath + this.viewFile;
+    }
+    
 }
