@@ -17,9 +17,6 @@
 
 package database;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * Construct specific active record objects by their select table/view.
  * @author Tobias Kahse <tobias.kahse@outlook.com>
@@ -27,21 +24,19 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class ActiveRecordFactory {
 
     /**
-     * Construct an active record by a given select table/view.
-     * @param request The request's request object
-     * @param response The request's response object
+     * Finds the class of an active record for a given table/view name.
      * @param table A string that identifies a table or view.
-     * @return the identified active record.
+     * @return the identified active record class.
      * @throws Exception when the provided table does not match with any of the select tables of the implemented active records.
      */
-    public static ActiveRecord createModuleComponent(HttpServletRequest request, HttpServletResponse response, String table) throws Exception{
+    public static Class<?> createActiveRecord(String table) throws Exception{
         
         if (DownloadFile.SELECT_TABLE.equalsIgnoreCase(table)) {
-            return new DownloadFile();
+            return DownloadFile.class;
         }
         
         if (User.SELECT_TABLE.equalsIgnoreCase(table)) {
-            return new User();
+            return User.class;
         }
         
         //If no active records has the specified select table, throw an exception.

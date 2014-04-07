@@ -18,6 +18,8 @@
 package database;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This exception will be thrown by all errors related to the database. It is 
@@ -27,7 +29,7 @@ import java.sql.SQLException;
  */
 public class DBException extends Exception{
 
-    private String database = ActiveRecord.DB_URL;
+    private String database = "";
     private int errorCode = -1;
     private SQLException sqle = null;
     
@@ -55,6 +57,11 @@ public class DBException extends Exception{
         super(message);
         this.sqle = sqle;
         this.errorCode = errorCode;
+        try {
+            this.database = DBConnection.getInstance().DB_URL;
+        } catch (DBException ex) {
+            Logger.getLogger(DBException.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -65,6 +72,11 @@ public class DBException extends Exception{
     public DBException(String message, SQLException sqle) {
         super(message);
         this.sqle = sqle;
+        try {
+            this.database = DBConnection.getInstance().DB_URL;
+        } catch (DBException ex) {
+            Logger.getLogger(DBException.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
@@ -73,6 +85,11 @@ public class DBException extends Exception{
      */
     public DBException(String message) {
         super(message);
+        try {
+            this.database = DBConnection.getInstance().DB_URL;
+        } catch (DBException ex) {
+            Logger.getLogger(DBException.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**
