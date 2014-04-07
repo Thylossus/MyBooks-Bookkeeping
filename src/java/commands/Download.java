@@ -21,12 +21,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * Constructs a download command using a request and a response object.
  * @author Tobias Kahse <tobias.kahse@outlook.com>
- * @version
+ * @version 0.1
  */
 public class Download extends Command{
 
+    /**
+     * Constructs a download command using a request and a response object.
+     * @param request The request object of the request.
+     * @param response The response object of the request.
+     */
     public Download (HttpServletRequest request, HttpServletResponse response) {
         super(request, response);        
         this.viewFile = "/download.jsp";

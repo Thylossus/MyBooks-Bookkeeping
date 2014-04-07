@@ -22,5 +22,9 @@ package database;
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
 public interface DBInsertable {
-    
+    /**
+     * Insert the object into the corresponding database table.
+     * @return Return true in case of a successful insertion and false otherwise.
+     */
+    public boolean insert();
 }

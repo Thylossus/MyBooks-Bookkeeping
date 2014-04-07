@@ -27,6 +27,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Help extends Command{
 
+    /**
+     * Constructs a help command using a request and a response object.
+     * @param request The request object of the request.
+     * @param response The response object of the request.
+     */
     public Help (HttpServletRequest request, HttpServletResponse response) {
         super(request, response);        
         this.viewFile = "/help.jsp";

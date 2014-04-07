@@ -21,12 +21,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * 
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  * @version
  */
 public class About extends Command{
 
+    /**
+     * Constructs an about command using a request and a response object.
+     * @param request The request object of the request.
+     * @param response The response object of the request.
+     */
     public About (HttpServletRequest request, HttpServletResponse response) {
         super(request, response);        
         this.viewFile = "/about.jsp";

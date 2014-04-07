@@ -15,35 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package commands;
+package model.components;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.ModelComponent;
 
 /**
- *
+ * Takes the name of a table or view, the desired order, and ltering arguments, 
+ * builds a database query, and creates a list of the results.
  * @author Tobias Kahse <tobias.kahse@outlook.com>
- * @version
  */
-public class Home extends Command{
+public class CreateDataList extends ModelComponent{
 
     /**
-     * Constructs a home command using a request and a response object.
-     * @param request The request object of the request.
-     * @param response The response object of the request.
+     * Construct a CreateDataList object
+     * @param request The request's request object
+     * @param response The request's response object
      */
-    public Home (HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);        
-        this.viewFile = "/home.jsp";
+    public CreateDataList(HttpServletRequest request, HttpServletResponse response) {
+        super(request, response);
     }
-    
+
     /**
-     * Executes the command and returns the location of the view.
-     * @return The relative location of the view's JSP file.
+     * Process the action for CreateDataList
      */
     @Override
-    public String execute() {        
-        return this.viewPath + this.viewFile;
+    protected void process() {
+        
     }
-    
+
 }

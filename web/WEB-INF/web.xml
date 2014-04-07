@@ -6,8 +6,10 @@
             <web-resource-name>Restricted folders</web-resource-name>
             <url-pattern>/html/*</url-pattern>
             <url-pattern>/xml/*</url-pattern>
+            <url-pattern>/json/*</url-pattern>
+            <url-pattern>/messages/*</url-pattern>
         </web-resource-collection>
-        <auth-constraint />
+        <auth-constraint/>
     </security-constraint>
     <filter>
         <filter-name>APIFilter</filter-name>

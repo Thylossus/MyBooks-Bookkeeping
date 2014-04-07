@@ -22,5 +22,9 @@ package database;
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
 public interface DBDeletable {
-    
+    /**
+     * Delete the object from the corresponding database table.
+     * @return Return true in case of a successful deletion and false otherwise.
+     */
+    public boolean delete();
 }

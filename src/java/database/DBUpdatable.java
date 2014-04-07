@@ -22,5 +22,9 @@ package database;
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
 public interface DBUpdatable {
-    
+    /**
+     * Update the object in the corresponding database table.
+     * @return Return true in case of a successful update and false otherwise.
+     */
+    public boolean update();
 }
