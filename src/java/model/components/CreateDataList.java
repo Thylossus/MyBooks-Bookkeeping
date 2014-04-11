@@ -23,6 +23,7 @@ import database.ActiveRecordFactory;
 import database.DBFilter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -51,40 +52,12 @@ public class CreateDataList extends ModelComponent{
         this.orderByColumns = null;
         this.dbFilter = null;
     }
-    
-    /**
-     * Set the table/view name, which will be used for querying the database.
-     * This is mandatory for executing the process method. If it is not set, 
-     * the process method will do nothing.
-     * @param tableName a string representing the name of a table or view
-     */
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-    
-    /**
-     * Set a list of column names that will be used for ordering the results.
-     * This is optional for the execution of the process method.
-     * @param orderByColumns an array of column names.
-     */
-    public void setOrderByColumns(String[] orderByColumns) {
-        this.orderByColumns = orderByColumns;
-    }
-    
-    /**
-     * Set a filter object that will be used to filter the results.
-     * This is optional for the execution of the process method.
-     * @param dbFilter an <code>DBFilter</code> object containing constraints.
-     */
-    public void setDbFilter(DBFilter dbFilter) {
-        this.dbFilter = dbFilter;
-    }
 
     /**
      * Process the action for CreateDataList
      */
     @Override
-    protected void process() {
+    public void process() {
         //Check whether the table name is empty.
         if (!this.tableName.isEmpty()) {
             try {
@@ -118,7 +91,7 @@ public class CreateDataList extends ModelComponent{
                 //Invoke "findAll"
                 ArrayList<ActiveRecord> dataList = (ArrayList<ActiveRecord>)findAll.invoke(null, paramValues);
                 //Store dataList in request scope
-                ScopeHandler.getInstance().store("dataList", dataList);
+                ScopeHandler.getInstance().store(this.request, "dataList", dataList);
             } catch (Exception ex) {
                 //Could not create the active record 
                 //  (did not find any active record for the specified table OR
@@ -128,6 +101,28 @@ public class CreateDataList extends ModelComponent{
         } else {
             //No table name specified => cannot process the module component
         }
+    }
+
+    /**
+     * Provide parameters to the model component.
+     * @param params an hash map of parameters.
+     * @return the module component. The return value can be used for concatenation.
+     */
+    @Override
+    public ModelComponent provideParameters(HashMap<String, Object> params) {
+        if (params.get("tableName") != null) {
+            this.tableName = params.get("tableName").toString();
+        }
+        
+        if (params.get("dbFilter") != null) {
+            this.dbFilter = (DBFilter) params.get("dbFilter");
+        }
+        
+        if (params.get("orderByColumns") != null) {
+            this.orderByColumns = (String[]) params.get("orderByColumns");
+        }
+        
+        return this;
     }
 
 }

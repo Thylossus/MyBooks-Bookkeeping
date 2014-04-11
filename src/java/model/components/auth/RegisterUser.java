@@ -18,16 +18,36 @@
 package model.components.auth;
 
 
+import database.User;
+import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.ModelComponent;
+import model.types.UserType;
 
 /**
- * _DESCRIPTION_
+ * Register a user in the system.
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
 public class RegisterUser extends ModelComponent{
 
+    /**
+     * User's forename.
+     */
+    private String firstname;
+    /**
+     * User's surname.
+     */
+    private String lastname;
+    /**
+     * User's e-mail address.
+     */
+    private String mail;
+    /**
+     * Hash value of user's password.
+     */
+    private byte[] password;
+    
     /**
      * Construct a RegisterUser object
      * @param request The request's request object
@@ -41,8 +61,52 @@ public class RegisterUser extends ModelComponent{
      * Process the action for RegisterUser
      */
     @Override
-    protected void process() {
+    public void process() {
+        if(this.firstname != null &&
+                this.lastname != null &&
+                this.mail != null &&
+                this.password != null) {
+            User newUser = new User();
+            newUser.setFirstname(this.firstname);
+            newUser.setLastname(this.lastname);
+            newUser.setMail(this.mail);
+            newUser.setPassword(this.password);
+            newUser.setUserType(UserType.STANDARD_USER);
+            
+            if (newUser.insert()) {
+                //Insertion successful
+            } else {
+                //Insertion unsuccessful
+            }
+        } else {
+            //Some input is not set and therefore the process cannot be started
+        }
+    }
+    
+    /**
+     * Provide parameters to the model component.
+     * @param params an hash map of parameters.
+     * @return the module component. The return value can be used for concatenation.
+     */
+    @Override
+    public ModelComponent provideParameters(HashMap<String, Object> params) {
+        if(params.get("firstname") != null) {
+            this.firstname = (String)params.get("firstname");
+        }
         
+        if(params.get("lastname") != null) {
+            this.lastname = (String)params.get("lastname");
+        }
+        
+        if(params.get("mail") != null) {
+            this.mail = (String)params.get("mail");
+        }
+        
+        if(params.get("password") != null) {
+            this.password = (byte[])params.get("password");
+        }
+        
+        return this;
     }
 
 }

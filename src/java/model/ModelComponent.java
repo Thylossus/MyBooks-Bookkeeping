@@ -17,6 +17,7 @@
 
 package model;
 
+import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,11 +30,11 @@ public abstract class ModelComponent {
     /**
      * The request's request object
      */
-    private HttpServletRequest request;
+    protected HttpServletRequest request;
     /**
      * The request's response object
      */
-    private HttpServletResponse response;
+    protected HttpServletResponse response;
     
     /**
      * Construct a model component and provide the request's request and response object.
@@ -48,6 +49,12 @@ public abstract class ModelComponent {
     /**
      * Process the model component's action
      */
-    protected abstract void process();
+    public abstract void process();
 
+    /**
+     * Provide parameters to the model component.
+     * @param params an hash map of parameters.
+     * @return the module component. The return value can be used for concatenation.
+     */
+    public abstract ModelComponent provideParameters(HashMap<String, Object> params);
 }

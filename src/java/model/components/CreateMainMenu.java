@@ -18,6 +18,7 @@
 package model.components;
 
 
+import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.ModelComponent;
@@ -41,8 +42,18 @@ public class CreateMainMenu extends ModelComponent{
      * Process the action for CreateMainMenu
      */
     @Override
-    protected void process() {
+    public void process() {
         
+    }
+
+    /**
+     * Provide parameters to the model component.
+     * @param params an hash map of parameters.
+     * @return the module component. The return value can be used for concatenation.
+     */
+    @Override
+    public ModelComponent provideParameters(HashMap<String, Object> params) {
+        return this;
     }
 
 }

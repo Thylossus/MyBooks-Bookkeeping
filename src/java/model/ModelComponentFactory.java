@@ -39,6 +39,14 @@ public abstract class ModelComponentFactory {
         switch (identifier) {
             case "CreateDataList":
                 return new model.components.CreateDataList(request, response);
+            case "SemanticInputValidation":
+                return new model.components.SemanticInputValidation(request, response);
+            case "SyntactialInputValidation":
+                return new model.components.SyntactialInputValidation(request, response);
+            case "RegisterUser":
+                return new model.components.auth.RegisterUser(request, response);
+            case "CreateMainMenu":
+                return new model.components.CreateMainMenu(request, response);
             default:
                 throw new Exception("Invalid identifier for a model component!");
         }

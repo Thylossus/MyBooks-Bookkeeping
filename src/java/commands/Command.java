@@ -36,7 +36,7 @@ public abstract class Command
     /**
      * The response object of the request.
      */
-    private HttpServletResponse response;
+    protected HttpServletResponse response;
     
     
 

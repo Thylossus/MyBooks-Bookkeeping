@@ -73,7 +73,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
     /**
      * A hash of the user's password
      */
-    private String password;
+    private byte[] password;
     /**
      * The user's surname
      */
@@ -109,7 +109,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
         try {
             this.id = rs.getInt(User.CLMN_ID);
             this.mail = rs.getString(User.CLMN_MAIL);
-            this.password = rs.getString(User.CLMN_PASSWORD);
+            this.password = rs.getBytes(User.CLMN_PASSWORD);
             this.firstname = rs.getString(User.CLMN_LASTNAME);
             this.lastname = rs.getString(User.CLMN_FIRSTNAME);
             this.signUpDate = rs.getDate(User.CLMN_SIGN_UP_DATE);
@@ -129,18 +129,15 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
      */
     private static ArrayList<User> executeSelection(String SQL) {
         ArrayList<User> users = new ArrayList<>();
-        Connection con = null;
+        Connection con;
         
         try {
             con = DBConnection.getInstance().getConnection();
-            try(PreparedStatement stmt = con.prepareStatement(SQL)) {
-                ResultSet rs = stmt.executeQuery();
+            try(PreparedStatement stmt = con.prepareStatement(SQL); ResultSet rs = stmt.executeQuery()) {
                 
                 while(rs.next()) {
                     users.add(new User(rs));
                 }
-                
-                rs.close();
             } catch (SQLException sqle) {
                 //Statement failed
                 String msg = "Failed to prepare the SQL statement.";
@@ -247,7 +244,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
      * Get the hash of the user's password.
      * @return The hash of the user's password
      */
-    public String getPassword() {
+    public byte[] getPassword() {
         return password;
     }
 
@@ -255,7 +252,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
      * Set the user's password.
      * @param password A hash of the user's password.
      */
-    public void setPassword(String password) {
+    public void setPassword(byte[] password) {
         this.password = password;
     }
 
