@@ -59,7 +59,14 @@ public class ScopeHandler {
      * @param scope the scope in which the value will be stored.
      */
     public void store(HttpServletRequest request, String key, Object value, String scope) {
-        
+        switch(scope) {
+            case "request":
+                this.store(request, key, value);
+            case "session":
+                request.getSession().setAttribute(key, value);
+            default:
+                this.store(request, key, value);
+        }
     }
     
     /**
@@ -69,7 +76,7 @@ public class ScopeHandler {
      * @param value the value to store.
      */
     public void store(HttpServletRequest request, String key, Object value) {
-        
+        request.setAttribute(key, value);
     }
     
     /**
@@ -80,7 +87,16 @@ public class ScopeHandler {
      * @return the loaded value.
      */
     public Object load(HttpServletRequest request, String key, String scope) {
-        return null;
+        switch(scope) {
+            case "request":
+                return this.load(request, key);
+            case "session":
+                return request.getSession().getAttribute(key);
+            case "parameter":
+                return request.getParameter(key);
+            default:
+                return this.load(request, key);
+        }
     }
     
     /**
@@ -90,7 +106,31 @@ public class ScopeHandler {
      * @return the loaded value.
      */
     public Object load(HttpServletRequest request, String key) {
-        return null;
+        return request.getAttribute(key);
+    }
+    
+    /**
+     * Remove a value form the request scope.
+     * @param request request object.
+     * @param key a string that identifies a stored value.
+     */
+    public void remove(HttpServletRequest request, String key) {
+        request.removeAttribute(key);
+    }
+    
+    /**
+     * Remove a value form the request scope.
+     * @param request request object.
+     * @param key a string that identifies a stored value.
+     * @param scope the scope from which the value will be removed.
+     */
+    public void remove(HttpServletRequest request, String key, String scope) {
+        switch(scope) {
+            case "request":
+                this.remove(request, key);
+            case "session":
+                request.getSession().removeAttribute(key);
+        }
     }
     
 }

@@ -27,11 +27,23 @@ import model.components.Input;
 public class SignIn extends Context{
 
     /**
+     * User's mail.
+     */
+    private String mail;
+    /**
+     * User's password.
+     */
+    private byte[] password;
+    
+    /**
      * Construct the sign in form context.
      * @param inputList 
      */
     public SignIn(ArrayList<Input> inputList) {
         this.inputList = inputList;
+        
+        this.mail = null;
+        this.password = null;
     }
     
     /**
@@ -40,7 +52,35 @@ public class SignIn extends Context{
      */
     @Override
     public boolean validate() {
-        return false;
+        //Check required parameters
+        //Check mail
+        if (inputList.get(0).getKey().equals("mail")) {
+            this.mail = (String)inputList.get(0).getValue();
+        } else {
+            this.mail = (String)this.searchInputValue("mail");
+            if (this.mail == null) {
+                return false;
+            }
+        }
+        //Check password
+        if (inputList.get(1).getKey().equals("password")) {
+            this.password = (byte[])inputList.get(1).getValue();
+        } else {
+            this.password = (byte[])this.searchInputValue("password");
+            if (this.password == null) {
+                return false;
+            }
+        }
+        
+        //Check length of mail and password hash
+        if (this.mail.toString().length() > 60) {
+            return false;
+        }
+        if (this.password.length != 32) {
+            return false;
+        }
+        
+        return true;
     }
     
 }

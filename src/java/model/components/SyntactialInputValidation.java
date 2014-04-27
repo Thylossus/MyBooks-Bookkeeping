@@ -63,7 +63,7 @@ public class SyntactialInputValidation extends ModelComponent{
             
             for (Input input : inputList) {
                 try {
-                    tmpInput = this.generalValidation(input);
+                    tmpInput = this.generalValidation(input.getValue());
                     switch (input.getType()) {
                         case NAME: 
                             input.setValue(this.validateName(tmpInput));
@@ -145,7 +145,7 @@ public class SyntactialInputValidation extends ModelComponent{
      * @throws Exception if input is syntactically invalid.
      */
     private String validateName(String input) throws Exception{
-        return "";
+        return input;
     }
     
     /**
@@ -155,7 +155,7 @@ public class SyntactialInputValidation extends ModelComponent{
      * @throws Exception if input is syntactically invalid.
      */
     private String validateDescription(String input) throws Exception{
-        return "";
+        return input;
     }
     
     /**
@@ -165,7 +165,7 @@ public class SyntactialInputValidation extends ModelComponent{
      * @throws Exception if input is syntactically invalid.
      */
     private String validateMail(String input) throws Exception{
-        return "";
+        return input;
     }
     
     /**
@@ -175,7 +175,7 @@ public class SyntactialInputValidation extends ModelComponent{
      * @throws Exception if input is syntactically invalid.
      */
     private int validateInteger(String input) throws Exception{
-        return 0;
+        return Integer.parseInt(input);
     }
     
     /**
@@ -185,7 +185,7 @@ public class SyntactialInputValidation extends ModelComponent{
      * @throws Exception if input is syntactically invalid.
      */
     private double validateFloat(String input) throws Exception{
-        return 0.0;
+        return Double.parseDouble(input);
     }
     
     /**
@@ -195,7 +195,30 @@ public class SyntactialInputValidation extends ModelComponent{
      * @throws Exception if input is syntactically invalid.
      */
     private GregorianCalendar validateDate(String input) throws Exception{
-        return new GregorianCalendar();
+        String[] splittedInput = input.split("-");
+        
+        if (splittedInput.length == 3) {
+            if (splittedInput[0].length() == 4) {
+                if (splittedInput[1].length() == 2) {
+                    if (splittedInput[2].length() == 2) {
+                        int year = Integer.parseInt(splittedInput[0]);
+                        int month = Integer.parseInt(splittedInput[1]);
+                        int day = Integer.parseInt(splittedInput[2]);
+                        
+                        return new GregorianCalendar(year, month, day);
+                    } else {
+                        throw new Exception("The entered date does not adhere to the format yyyy-MM-dd. Day is not provided as dd.");
+                    }
+                } else {
+                    throw new Exception("The entered date does not adhere to the format yyyy-MM-dd. Month is not provided as MM.");
+                }
+            } else {
+                throw new Exception("The entered date does not adhere to the format yyyy-MM-dd. Year is not provided as yyyy.");
+            }
+        } else {
+            throw new Exception("The entered date does not adhere to the format yyyy-MM-dd. Not enough or too many hyphens.");
+        }
+        
     }
     
     /**

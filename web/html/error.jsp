@@ -4,18 +4,13 @@
     Author     : Tobias Kahse <tobias.kahse@outlook.com>
 --%>
 
-<%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
+<%@taglib prefix="x" uri="http://java.sun.com/jsp/jstl/xml" %>
+<%@include file="header.jsp" %>
+
+<div class="container">
+    <div class="jumbotron">
         <h1>Error</h1>
-        
+
         <c:import var="errormessages" url="../messages/errors.xml"/>
         <x:parse xml="${errormessages}" var="output" />
         <x:forEach select="$output/messages/msg" var="msg">
@@ -23,5 +18,6 @@
                 <x:out select="$msg/errormsg" />
             </x:if>
         </x:forEach>
-    </body>
-</html>
+    </div>
+</div>
+<%@include file="footer.jsp" %>

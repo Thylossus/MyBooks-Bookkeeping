@@ -17,8 +17,12 @@
 
 package commands;
 
+import controller.ScopeHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.ModelComponentFactory;
 
 /**
  *
@@ -35,6 +39,7 @@ public class Home extends Command{
     public Home (HttpServletRequest request, HttpServletResponse response) {
         super(request, response);        
         this.viewFile = "/home.jsp";
+        ScopeHandler.getInstance().store(request, "title", "Home");
     }
     
     /**
@@ -42,7 +47,14 @@ public class Home extends Command{
      * @return The relative location of the view's JSP file.
      */
     @Override
-    public String execute() {        
+    public String execute() {    
+        //dummy code
+        try {
+            ModelComponentFactory.createModuleComponent(this.request, this.response, "CreateMainMenu").process();
+        } catch (Exception ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         return this.viewPath + this.viewFile;
     }
     

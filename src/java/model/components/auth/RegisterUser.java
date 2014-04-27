@@ -18,8 +18,11 @@
 package model.components.auth;
 
 
+import controller.ScopeHandler;
 import database.User;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.ModelComponent;
@@ -75,8 +78,12 @@ public class RegisterUser extends ModelComponent{
             
             if (newUser.insert()) {
                 //Insertion successful
+                Logger.getLogger(RegisterUser.class.getName()).log(Level.FINE, "Registering user was successful!");
+                //Store user in session scope
+                ScopeHandler.getInstance().store(this.request, "user", newUser, "session");
             } else {
                 //Insertion unsuccessful
+                Logger.getLogger(RegisterUser.class.getName()).log(Level.WARNING, "Registering user failed!");
             }
         } else {
             //Some input is not set and therefore the process cannot be started

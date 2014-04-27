@@ -82,6 +82,21 @@ public class DBException extends Exception{
     /**
      * Generate a DBException for an error.
      * @param message Error message
+     * @param errorCode Error code
+     */
+    public DBException(String message, int errorCode) {
+        super(message);
+        this.errorCode = errorCode;
+        try {
+            this.database = DBConnection.getInstance().DB_URL;
+        } catch (DBException ex) {
+            Logger.getLogger(DBException.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Generate a DBException for an error.
+     * @param message Error message
      */
     public DBException(String message) {
         super(message);

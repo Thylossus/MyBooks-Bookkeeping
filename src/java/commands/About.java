@@ -17,8 +17,12 @@
 
 package commands;
 
+import controller.ScopeHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.ModelComponentFactory;
 
 /**
  * 
@@ -35,6 +39,7 @@ public class About extends Command{
     public About (HttpServletRequest request, HttpServletResponse response) {
         super(request, response);        
         this.viewFile = "/about.jsp";
+        ScopeHandler.getInstance().store(request, "title", "About");
     }
     
     /**
@@ -43,6 +48,13 @@ public class About extends Command{
      */
     @Override
     public String execute() {        
+        
+        try {
+            ModelComponentFactory.createModuleComponent(this.request, this.response, "CreateMainMenu").process();
+        } catch (Exception ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         return this.viewPath + this.viewFile;
     }
     

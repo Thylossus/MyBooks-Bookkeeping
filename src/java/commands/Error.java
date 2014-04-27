@@ -17,8 +17,12 @@
 
 package commands;
 
+import controller.ScopeHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.ModelComponentFactory;
 
 /**
  * This command is exlusively used for handling errors occured in the 
@@ -36,7 +40,9 @@ public class Error extends Command{
      * @param response The response object of the request.
      */
     public Error (HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);        
+        super(request, response);       
+        
+        ScopeHandler.getInstance().store(request, "title", "Error");
         this.viewFile = "/error.jsp";
         this.xmlOutput = true;
         this.jsonOutput = true;
@@ -50,6 +56,14 @@ public class Error extends Command{
     @Override
     public String execute() {   
         this.request.setAttribute("errno", this.errno);
+        
+        try {
+            ModelComponentFactory.createModuleComponent(this.request, this.response, "CreateMainMenu").process();
+        } catch (Exception ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         return this.viewPath + this.viewFile;
     }
     

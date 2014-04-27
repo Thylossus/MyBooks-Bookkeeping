@@ -22,6 +22,7 @@ package model.types;
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
 public enum UserType {
+    //Order the types from lowest to highest rights!
     GUEST (1, "Guest"),
     STANDARD_USER (2, "Standard User"),
     PREMIUM_USER (3, "Premium User"),

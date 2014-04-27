@@ -20,7 +20,6 @@ package database;
 /**
  * Active record for DownloadFiles
  * @author Tobias Kahse <tobias.kahse@outlook.com>
- * @version 0.1
  */
 public class DownloadFile extends ActiveRecord implements DBDeletable, DBInsertable, DBUpdatable{
 
@@ -28,11 +27,21 @@ public class DownloadFile extends ActiveRecord implements DBDeletable, DBInserta
     /**
      * The table that is used for selecting records.
      */
-    public static final String SELECT_TABLE = "";
+    public static final String SELECT_TABLE = "DOWNLOAD_FILES";
     /**
      * The table for modifying records.
      */
-    private static final String MODIFY_TABLE = "";
+    private static final String MODIFY_TABLE = "DOWNLOAD_FILES";
+    
+    //Columns
+    public static final String CLMN_ID = "ID";
+    public static final String CLMN_TITLE = "TITLE";
+    public static final String CLMN_DESCRIPTION = "DESCRIPTION";
+    public static final String CLMN_UPLOAD_DATE = "UPLOAD_DATE";
+    public static final String CLMN_FILENAME = "FILENAME";
+    public static final String CLMN_FILESIZE = "FILESIZE";
+    public static final String CLMN_NUMBER_OF_DOWNLOADS = "NUMBER_OF_DOWNLOADS";
+    public static final String CLMN_DIRECTORY = "DIRECTORY";
     
     //SQL code
     /**

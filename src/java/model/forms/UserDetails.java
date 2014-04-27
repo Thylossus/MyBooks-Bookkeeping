@@ -18,6 +18,7 @@
 package model.forms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import model.components.Input;
 
 /**
@@ -27,20 +28,113 @@ import model.components.Input;
 public class UserDetails extends Context{
 
     /**
+     * User's firstname.
+     */
+    private String firstname;
+    /**
+     * User's lastname.
+     */
+    private String lastname;
+    /**
+     * User's mail.
+     */
+    private String mail;
+    /**
+     * User's password.
+     */
+    private byte[] password;
+    /**
+     * User's re-entered password.
+     */
+    private byte[] rePassword;
+    
+    /**
      * Construct the user details context.
      * @param inputList 
      */
     public UserDetails(ArrayList<Input> inputList) {
         this.inputList = inputList;
+        
+        this.firstname = null;
+        this.lastname = null;
+        this.mail = null;
+        this.password = null;
+        this.rePassword = null;
     }
     
     /**
      * Validate the given inputs for the user details context.
-     * @return 
+     * @return True if the input is valid and false if it is invalid.
      */
     @Override
     public boolean validate() {
-        return false;
+        //Check required parameters
+        //Check firstname
+        if (inputList.get(0).getKey().equals("firstname")) {
+            this.firstname = (String)inputList.get(0).getValue();
+        } else {
+            this.firstname = (String)this.searchInputValue("firstname");
+            if (this.firstname == null) {
+                return false;
+            }
+        }
+        //Check lastname
+        if (inputList.get(1).getKey().equals("lastname")) {
+            this.lastname = (String)inputList.get(1).getValue();
+        } else {
+            this.lastname = (String)this.searchInputValue("lastname");
+            if (this.lastname == null) {
+                return false;
+            }
+        }       
+        //Check mail
+        if (inputList.get(2).getKey().equals("mail")) {
+            this.mail = (String)inputList.get(2).getValue();
+        } else {
+            this.mail = (String)this.searchInputValue("mail");
+            if (this.mail == null) {
+                return false;
+            }
+        }
+        //Check password
+        if (inputList.get(3).getKey().equals("password")) {
+            this.password = (byte[])inputList.get(3).getValue();
+        } else {
+            this.password = (byte[])this.searchInputValue("password");
+            if (this.password == null) {
+                return false;
+            }
+        }
+        //Check re-password
+        if (inputList.get(4).getKey().equals("re-password")) {
+            this.rePassword = (byte[])inputList.get(4).getValue();
+        } else {
+            this.rePassword = (byte[])this.searchInputValue("re-password");
+            if (this.rePassword == null) {
+                return false;
+            }
+        }
+        
+        //Check length of strings and password hash
+        if (this.firstname.length() > 30) {
+            return false;
+        }
+        if (this.lastname.length() > 30) {
+            return false;
+        }
+        if (this.mail.toString().length() > 60) {
+            return false;
+        }
+        if (this.password.length != 32 || this.rePassword.length != 32) {
+            return false;
+        }
+        
+        //Check if both passwords match
+        if (!Arrays.equals(this.password, this.rePassword)) {
+            return false;
+        }
+        
+        return true;
     }
     
 }

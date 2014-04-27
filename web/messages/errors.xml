@@ -30,4 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <errno>3</errno>
         <errormsg>Command not found</errormsg>
     </msg>
+    <msg>
+        <errno>4</errno>
+        <errormsg>Access denied</errormsg>
+    </msg>
 </messages>

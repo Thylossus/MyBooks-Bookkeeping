@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package database;
 
 import java.sql.Connection;
@@ -22,6 +21,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -32,7 +32,7 @@ import model.types.UserType;
  *
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
-public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBUpdatable{
+public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBUpdatable {
 
     //Tables
     /**
@@ -43,7 +43,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
      * The table for modifying records.
      */
     private static final String MODIFY_TABLE = "USERS";
-    
+
     //Columns
     public static final String CLMN_ID = "ID";
     public static final String CLMN_MAIL = "MAIL";
@@ -53,15 +53,15 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
     public static final String CLMN_SIGN_UP_DATE = "SIGN_UP_DATE";
     public static final String CLMN_LAST_SIGN_IN_DATE = "LAST_SIGN_IN_DATE";
     public static final String CLMN_USER_TYPE = "USER_TYPE";
-    
+
     //SQL code
     /**
      * SQL query for selecting all users from the USERS table.
      */
-    private static final String SELECT_ALL = 
-            "SELECT * " + 
-            "FROM " + User.SELECT_TABLE;
-    
+    private static final String SELECT_ALL
+            = "SELECT * "
+            + "FROM " + User.SELECT_TABLE;
+
     /**
      * User ID (read-only)
      */
@@ -99,13 +99,18 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
     /**
      * Empty constructor for creating non-initialised Users.
      */
-    public User(){}
-    /**
-     * Construct a User from a result set.
-     * @param rs a result set containing data about a User.
-     * @throws DBException if reading from the result set failed.
-     */
-    public User(ResultSet rs) throws DBException{
+    public User() {
+        this.id = 0;
+        this.mail = null;
+        this.password = null;
+        this.lastname = null;
+        this.firstname = null;
+        this.signUpDate = null;
+        this.lastSignInDate = null;
+        this.userType = null;
+    }
+
+    public User(ResultSet rs) throws DBException {
         try {
             this.id = rs.getInt(User.CLMN_ID);
             this.mail = rs.getString(User.CLMN_MAIL);
@@ -120,22 +125,23 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
             throw new DBException(msg, sqle, 3);
         }
     }
-    
+
     //Selection
     /**
      * Execute an SQL query that is provided as a string.
+     *
      * @param SQL a string containing a valid SQL statement.
      * @return A list of Users that may also be empty.
      */
     private static ArrayList<User> executeSelection(String SQL) {
         ArrayList<User> users = new ArrayList<>();
         Connection con;
-        
+
         try {
             con = DBConnection.getInstance().getConnection();
-            try(PreparedStatement stmt = con.prepareStatement(SQL); ResultSet rs = stmt.executeQuery()) {
-                
-                while(rs.next()) {
+            try (PreparedStatement stmt = con.prepareStatement(SQL); ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
                     users.add(new User(rs));
                 }
             } catch (SQLException sqle) {
@@ -147,77 +153,206 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
             //Establishing connection failed
             Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return users;
     }
-    
+
     /**
      * Find all users of the system.
+     *
      * @return a list of all system users encapsulated in active record objects.
      */
     public static ArrayList<User> findAll() {
         return User.executeSelection(User.SELECT_ALL);
     }
-    
+
     /**
      * Find all users of the system and order the results.
+     *
      * @param orderBy an array of column names that will be used for sorting.
      * @return a list of all system users encapsulated in active record objects.
      */
     public static ArrayList<User> findAll(final String[] orderBy) {
         return User.executeSelection(User.SELECT_ALL + ActiveRecord.buildOrderBy(orderBy));
     }
-    
+
     /**
      * Find all users of the system and filter the results.
-     * @param filter a <code>DBFilter</code> object that contains the constraints for the query's where clause.
+     *
+     * @param filter a <code>DBFilter</code> object that contains the
+     * constraints for the query's where clause.
      * @return a list of all system users encapsulated in active record objects.
      */
     public static ArrayList<User> findAll(DBFilter filter) {
-        return User.executeSelection(User.SELECT_ALL + filter.buildWhereClause());
+        try {
+            return User.executeSelection(User.SELECT_ALL + filter.buildWhereClause());
+        } catch (DBException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
-    
+
     /**
      * Find all users of the system and order and filter the results.
+     *
      * @param orderBy an array of colunn names that will be used for sorting.
-     * @param filter a <code>DBFilter</code> object that contains the constraints for the query's where clause.
+     * @param filter a <code>DBFilter</code> object that contains the
+     * constraints for the query's where clause.
      * @return a list of all system users encapsulated in active record objects.
      */
     public static ArrayList<User> findAll(final String[] orderBy, DBFilter filter) {
-        return User.executeSelection(User.SELECT_ALL + filter.buildWhereClause() + ActiveRecord.buildOrderBy(orderBy));
+        try {
+            return User.executeSelection(User.SELECT_ALL + filter.buildWhereClause() + ActiveRecord.buildOrderBy(orderBy));
+        } catch (DBException ex) {
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
-    
+
     //Modification 
     /**
      * Insert the user specified in this active record into the database.
-     * @return Returns true if the insertion was successfull and false otherwise.
+     *
+     * @return Returns true if the insertion was successfull and false
+     * otherwise.
      */
     @Override
     public boolean insert() {
-        return false;
+        Connection con;
+        String sql = "INSERT INTO " + User.MODIFY_TABLE
+                + "(" + User.CLMN_MAIL + ", " + User.CLMN_PASSWORD + ", " + User.CLMN_LASTNAME + ", " + User.CLMN_FIRSTNAME + ", " + User.CLMN_USER_TYPE + ")"
+                + " VALUES "
+                + "(?, ?, ?, ?, ?)";
+
+        try {
+            con = DBConnection.getInstance().getConnection();
+            try (PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+                stmt.setString(1, this.mail);
+                stmt.setBytes(2, this.password);
+                stmt.setString(3, this.lastname);
+                stmt.setString(4, this.firstname);
+                stmt.setInt(5, this.userType.getId());
+
+                if (stmt.executeUpdate() != 1) {
+                    Logger.getLogger(User.class.getName()).log(Level.WARNING, "Failed to insert new user in DB!");
+                } else {
+                    //Get the id of the new user
+                    ResultSet rs = stmt.getGeneratedKeys();
+                    if (rs.next()) {
+                        this.id = rs.getInt(1);
+                    }
+                }
+
+            } catch (SQLException sqle) {
+                //Statement failed
+                String msg = "Failed to prepare the SQL statement.";
+                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, new DBException(msg, sqle, 2));
+            }
+        } catch (DBException ex) {
+            //Establishing connection failed
+            Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return true;
     }
-    
+
     /**
      * Update the user specified in this active record in the database.
+     *
      * @return Returns true if the update was successfull and false otherwise.
      */
     @Override
     public boolean update() {
-        return false;
+        if (this.id != 0
+                && this.mail != null
+                && this.password != null
+                && this.lastname != null
+                && this.firstname != null
+                && this.lastSignInDate != null
+                && this.userType != null) {
+            Connection con;
+            String sql = "UPDATE " + User.MODIFY_TABLE
+                    + " SET " + User.CLMN_MAIL + " = ? ,"
+                    + " " + User.CLMN_PASSWORD + " = ? ,"
+                    + " " + User.CLMN_LASTNAME + " = ? ,"
+                    + " " + User.CLMN_FIRSTNAME + " = ? ,"
+                    + " " + User.CLMN_LAST_SIGN_IN_DATE + " = ? ,"
+                    + " " + User.CLMN_USER_TYPE + " = ?"
+                    + " WHERE " + User.CLMN_ID + " = ?";
+
+            try {
+                con = DBConnection.getInstance().getConnection();
+                try (PreparedStatement stmt = con.prepareStatement(sql)) {
+
+                    stmt.setString(1, this.mail);
+                    stmt.setBytes(2, this.password);
+                    stmt.setString(3, this.lastname);
+                    stmt.setString(4, this.firstname);
+                    stmt.setTimestamp(5, this.lastSignInDate);
+                    stmt.setInt(6, this.userType.getId());
+                    stmt.setInt(7, this.id);
+
+                    if (stmt.executeUpdate() != 1) {
+                        Logger.getLogger(User.class.getName()).log(Level.WARNING, "Failed to update user in DB!");
+                    }
+                } catch (SQLException sqle) {
+                    //Statement failed
+                    String msg = "Failed to prepare the SQL statement.";
+                    Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, new DBException(msg, sqle, 2));
+                }
+            } catch (DBException ex) {
+                //Establishing connection failed
+                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
-    
+
     /**
      * Removes the user from the database.
+     *
      * @return Returns true if the deletion was successfull and false otherwise.
      */
     @Override
     public boolean delete() {
-        return false;
+        if (this.id != 0) {
+            Connection con;
+            String sql = "DELETE FROM " + User.MODIFY_TABLE
+                    + " WHERE " + User.CLMN_ID + " = ?";
+
+            try {
+                con = DBConnection.getInstance().getConnection();
+                try (PreparedStatement stmt = con.prepareStatement(sql)) {
+
+                    stmt.setInt(1, this.id);
+
+                    if (stmt.executeUpdate() != 1) {
+                        Logger.getLogger(User.class.getName()).log(Level.WARNING, "Failed to delete user from DB!");
+                    }
+                } catch (SQLException sqle) {
+                    //Statement failed
+                    String msg = "Failed to prepare the SQL statement.";
+                    Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, new DBException(msg, sqle, 2));
+                }
+            } catch (DBException ex) {
+                //Establishing connection failed
+                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
-    
+
     //Getter & Setter
     /**
      * Get the user ID.
+     *
      * @return The user ID
      */
     public int getId() {
@@ -226,6 +361,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Get the user's e-mail address.
+     *
      * @return The user's e-mail address
      */
     public String getMail() {
@@ -234,6 +370,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Set the user's e-mail address.
+     *
      * @param mail An e-mail address
      */
     public void setMail(String mail) {
@@ -242,6 +379,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Get the hash of the user's password.
+     *
      * @return The hash of the user's password
      */
     public byte[] getPassword() {
@@ -250,6 +388,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Set the user's password.
+     *
      * @param password A hash of the user's password.
      */
     public void setPassword(byte[] password) {
@@ -258,6 +397,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Get the user's surname.
+     *
      * @return The user's surname
      */
     public String getLastname() {
@@ -266,6 +406,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Set the user's surname
+     *
      * @param lastname The user's surname
      */
     public void setLastname(String lastname) {
@@ -274,6 +415,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Get the user's forename.
+     *
      * @return The user's forname
      */
     public String getFirstname() {
@@ -282,6 +424,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Set the user's forname.
+     *
      * @param firstname The user's forname
      */
     public void setFirstname(String firstname) {
@@ -290,6 +433,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Get the user's sign up date.
+     *
      * @return The user's sign up date
      */
     public Date getSignUpDate() {
@@ -298,6 +442,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Get the timestamp of the user's last login.
+     *
      * @return The timestamp of the user's last login
      */
     public Timestamp getLastSignInDate() {
@@ -306,6 +451,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Set the timestamp of the user's last login.
+     *
      * @param lastSignInDate The timestamp of the user's last login
      */
     public void setLastSignInDate(Timestamp lastSignInDate) {
@@ -314,6 +460,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Get the user's type.
+     *
      * @return The user's type
      */
     public UserType getUserType() {
@@ -322,10 +469,11 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
 
     /**
      * Set the user's type.
+     *
      * @param userType The user's type
      */
     public void setUserType(UserType userType) {
         this.userType = userType;
     }
-    
+
 }

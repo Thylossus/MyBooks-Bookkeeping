@@ -35,4 +35,20 @@ public abstract class Context {
      * @return true if the validation is successful, false otherwise.
      */
     public abstract boolean validate();
+    
+    /**
+     * Search for an input by its key.
+     * @param key a string representing the searched input's key.
+     * @return The value of the input that matches the given key. If no input has the given key, null will be returned.
+     */
+    protected Object searchInputValue(String key) {
+        for (Input i : this.inputList) {
+            if (i.getKey().equals(key)) {
+                return i;
+            }
+        }
+        
+        return null;
+    }
+    
 }

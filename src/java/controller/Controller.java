@@ -31,8 +31,14 @@ public class Controller extends HttpServlet {
 
         String view = command.execute();
 
-        RequestDispatcher rd = request.getRequestDispatcher(view);
-        rd.forward(request, response);
+        if (view.contains(".jsp")) {
+            RequestDispatcher rd = request.getRequestDispatcher(view);
+            rd.forward(request, response);
+        } else {
+            //If the given view is not a jsp page, use a redirect instead of the forward.
+            //The viewPath has to be "/MyBooks-Bookkeeping"
+            response.sendRedirect(view);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
