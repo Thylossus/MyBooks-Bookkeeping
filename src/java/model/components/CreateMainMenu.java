@@ -16,47 +16,28 @@
  */
 package model.components;
 
-import beans.MainMenuItem;
+import beans.MainMenu;
+import beans.Menu;
 import controller.ScopeHandler;
-import java.util.ArrayList;
+import database.User;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.ModelComponent;
+import model.components.auth.CheckUserCredentials;
+import model.types.UserType;
 
 /**
- * _DESCRIPTION_
+ * Model component for creating main menus depending on the active user type.
  *
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
 public class CreateMainMenu extends ModelComponent {
 
-    //Constants for specifying how the main menu will be constructed.
     /**
-     * Build the default main menu using only standard menu items.
+     * The active user. If no user is logged in, this field is null.
      */
-    public static final String CREATION_MODE_DEFAULT = "default";
-    /**
-     * Build a custom main menu using only user specified MenuItems.
-     */
-    public static final String CREATION_MODE_CUSTOM = "custom";
-    /**
-     * Build a main menu using the standard menu items and additional user
-     * defined items.
-     */
-    public static final String CREATION_MODE_EXTENSION = "extension";
-
-    /**
-     * Mode of construction of the main menu. Use the class' constants for this
-     * field.
-     */
-    private String constructionMode;
-
-    /**
-     * A list of main menu items specified by the calling application and
-     * provided by the <code>provideParameters</code> method.
-     */
-    private ArrayList<MainMenuItem> customMenuItems;
+    private User activeUser;
 
     /**
      * Construct a CreateMainMenu object
@@ -66,8 +47,12 @@ public class CreateMainMenu extends ModelComponent {
      */
     public CreateMainMenu(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
-        this.constructionMode = CreateMainMenu.CREATION_MODE_DEFAULT;
-        this.customMenuItems = null;
+        CheckUserCredentials cuc = new CheckUserCredentials(this.request, this.response);
+        if (cuc.validateLogIn()) {
+            this.activeUser = (User)ScopeHandler.getInstance().load(this.request, "user", "session");
+        } else {
+            this.activeUser = null;
+        }
     }
 
     /**
@@ -75,19 +60,32 @@ public class CreateMainMenu extends ModelComponent {
      */
     @Override
     public void process() {
-        beans.MainMenu mainMenu = null;
+        String baseURL = "http://" + this.request.getServerName() + ":" + this.request.getServerPort() + this.request.getContextPath();
+        MainMenu mainMenu = new MainMenu("MyBooks", baseURL);
+        mainMenu.setAuthenticationMenu(this.activeUser);
+        mainMenu.addItem("Home").setActive();
+        mainMenu.addItem("Download");
+        mainMenu.addItem("About");
+        mainMenu.addItem("Help");
 
-        switch (this.constructionMode) {
-            case CreateMainMenu.CREATION_MODE_DEFAULT:
-                mainMenu = this.constructDefaultMenu();
-                break;
-            case CreateMainMenu.CREATION_MODE_CUSTOM:
-                break;
-            case CreateMainMenu.CREATION_MODE_EXTENSION:
-                //Not sure if required...
-                break;
-            default:
-                mainMenu = this.constructDefaultMenu();
+        if (this.activeUser != null) {
+            Menu bsmSubmenu = new Menu();
+            
+            bsmSubmenu.addItem("Management", mainMenu.getBaseURL() + "/bsm/balancesheets");
+            bsmSubmenu.addItem("Create Balance Sheet", mainMenu.getBaseURL() + "/bsm/createbalancesheet");
+            bsmSubmenu.addItem("Open Editor", mainMenu.getBaseURL() + "/bsm/openbalancesheeteditor");
+            
+            mainMenu.addItem("Balance Sheets", bsmSubmenu.getMenuItems());
+            if (this.activeUser.getUserType().getId() >= UserType.NEWS_WRITER.getId()) {
+                Menu articleSubmenu = new Menu();
+                
+                mainMenu.addItem("Articles", articleSubmenu.getMenuItems());
+                if (this.activeUser.getUserType() == UserType.ADMINISTRATOR) {
+                    Menu sysmgmtSubmenu = new Menu();
+                    
+                    mainMenu.addItem("System Management", sysmgmtSubmenu.getMenuItems());
+                }
+            }
         }
 
         ScopeHandler.getInstance().store(request, "mainMenu", mainMenu);
@@ -102,24 +100,6 @@ public class CreateMainMenu extends ModelComponent {
      */
     @Override
     public ModelComponent provideParameters(HashMap<String, Object> params) {
-        if (params.get("constructionMode") != null) {
-            this.constructionMode = (String) params.get("constructionMode");
-        }
-
-        if (params.get("customMenuItems") != null) {
-            this.customMenuItems = (ArrayList<MainMenuItem>) params.get("customMenuItems");
-        }
-
         return this;
     }
-
-    private beans.MainMenu constructDefaultMenu() {
-        beans.MainMenu mainMenu = new beans.MainMenu();
-        mainMenu.setActiveItem(mainMenu.addItem("Home"));
-        mainMenu.addItem("Download");
-        mainMenu.addItem("About");
-        mainMenu.addItem("Help");
-        return mainMenu;
-    }
-
 }

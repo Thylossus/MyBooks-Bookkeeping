@@ -20,6 +20,8 @@ package model.components.auth;
 
 import controller.ScopeHandler;
 import database.User;
+import java.sql.Timestamp;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -79,6 +81,8 @@ public class RegisterUser extends ModelComponent{
             if (newUser.insert()) {
                 //Insertion successful
                 Logger.getLogger(RegisterUser.class.getName()).log(Level.FINE, "Registering user was successful!");
+                //Store last sign in date of the user (i.e. current timestamp)
+                newUser.setLastSignInDate(new Timestamp(new GregorianCalendar().getTimeInMillis()));
                 //Store user in session scope
                 ScopeHandler.getInstance().store(this.request, "user", newUser, "session");
             } else {

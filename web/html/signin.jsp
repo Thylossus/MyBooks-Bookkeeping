@@ -8,13 +8,13 @@
 
 <div class="container">
 
-      <form class="form-signin" role="form" method="POST">
+    <form class="form-signin" role="form" method="POST">
         <h2 class="form-signin-heading">Please sign in</h2>
-        <input type="email" name="mail" class="form-control" placeholder="Email Address" required autofocus>
-        <input type="password" name="password" class="form-control" placeholder="Password" required>
+        <input type="email" name="mail" class="form-control" placeholder="Email Address" required autofocus />
+        <input type="password" name="password" class="form-control" placeholder="Password" required />
         <button class="btn btn-lg btn-primary btn-block" name="submit" type="submit">Sign in</button>
-      </form>
+    </form>
 
-    </div> <!-- /container -->
+</div> <!-- /container -->
 
 <%@include file="footer.jsp" %>

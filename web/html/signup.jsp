@@ -7,24 +7,17 @@
 <%@include file="header.jsp" %>
 
 <div class="container">
-    <form method="POST" action="">
-        <label for="firstname">Forename</label>
-        <input type="text" id="firstname" name="firstname" />
-        <br />
-        <label for="lastname">Surname</label>
-        <input type="text" id="lastname" name="lastname" />
-        <br />
-        <label for="mail">E-Mail Address</label>
-        <input type="email" id="mail" name="mail" />
-        <br />
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" />
-        <br />
-        <label for="re-password">Password</label>
-        <input type="password" id="re-password" name="re-password" />
-        <br />
-        <input type="submit" name="submit" value="Sign up" />
+
+    <form class="form-signup" role="form" method="POST">
+        <h2 class="form-signup-heading">Please sign up</h2>
+        <input type="text" name="firstname" class="form-control first-child" placeholder="Forename" required autofocus />
+        <input type="text" name="lastname" class="form-control" placeholder="Surname" required />
+        <input type="email" name="mail" class="form-control" placeholder="Email Address" required />
+        <input type="password" name="password" class="form-control" placeholder="Password" required />
+        <input type="password" name="re-password" class="form-control last-child" placeholder="Retype Password" required />
+        <button class="btn btn-lg btn-primary btn-block" name="submit" type="submit">Sign up</button>
     </form>
-</div>
+
+</div> <!-- /container -->
 
 <%@include file="footer.jsp" %>

@@ -17,128 +17,70 @@
 
 package beans;
 
-import java.util.ArrayList;
+import database.User;
 
 /**
  * Java Bean for main menus.
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
-public class MainMenu {
-
+public class MainMenu extends Menu{
     /**
-     * Items of the main menu.
+     * The authentication menu of the main menu.
      */
-    private ArrayList<MainMenuItem> menuItems;
-    /**
-     * The active item of the main menu.
-     */
-    private MainMenuItem activeItem;
+    private final AuthenticationMenu authenticationMenu;
     
     /**
-     * The menu's title (read-only).
+     * The menu's title (read-only). This is the project's name.
      */
-    private String title;
+    private final String title;
+    
+    /**
+     * The project's base URL (read-only).
+     */
+    private final String baseURL;
 
     /**
      * Construct an empty main menu.
+     * @param title The main menu's title.
+     * @param baseURL The project's base URL.
      */
-    public MainMenu() {
-        this.menuItems = new ArrayList<>();
-        this.activeItem = null;
+    public MainMenu(String title, String baseURL) {
+        super();
         
-        this.title = "MyBooks";
+        this.title = title;
+        this.baseURL = baseURL;
+        this.authenticationMenu = new AuthenticationMenu(this.baseURL);
     }
-
-    /**
-     * Get the menu's items.
-     * @return the menu's items.
-     */
-    public ArrayList<MainMenuItem> getMenuItems() {
-        return menuItems;
-    }
-
-    /**
-     * Get the menu's active item.
-     * @return the menu's active item.
-     */
-    public MainMenuItem getActiveItem() {
-        return activeItem;
-    }
-
-    /**
-     * Set the menu's active item.
-     * @param activeItem the menu's active item.
-     */
-    public void setActiveItem(MainMenuItem activeItem) {
-        this.activeItem = activeItem;
-    }  
 
     /**
      * Get the main menu's title.
      * @return the main menu's title.
      */
     public String getTitle() {
-        return title;
+        return this.title;
     }
     
     /**
-     * Add item with submenu to the menu.
-     * @param label the item's label.
-     * @param link the item's link.
-     * @param submenu the item's submenu.
-     * @return the added item.
+     * Get the project's base URL.
+     * @return the project's base URL.
      */
-    public MainMenuItem addItem(String label, String link, ArrayList<MainMenuItem> submenu) {
-        MainMenuItem item = this.addItem(label, link);
-        
-        item.setSubmenu(submenu);
-        
-        return item;
-    }
-    
-     /**
-     * Add item with submenu to the menu. The item's link is constructed from its label.
-     * @param label the item's label.
-     * @param submenu the item's submenu.
-     * @return the added item.
-     */
-    public MainMenuItem addItem(String label, ArrayList<MainMenuItem> submenu) {
-        MainMenuItem item = this.addItem(label);
-        
-        item.setSubmenu(submenu);
-        
-        return item;
+    public String getBaseURL() {
+        return this.baseURL;
     }
     
     /**
-     * Add an item to the menu.
-     * @param label the item's label.
-     * @param link the item's link.
-     * @return the added item.
+     * Set the user of the authentication menu. If the user is not set the sign in form will be displayed.
+     * @param user the active user.
      */
-    public MainMenuItem addItem(String label, String link) {
-        MainMenuItem item = new MainMenuItem();
-        
-        item.setLabel(label);
-        item.setLink(link);
-        this.menuItems.add(item);
-        
-        return item;
+    public void setAuthenticationMenu(User user) {
+        this.authenticationMenu.setActiveUser(user);
     }
     
     /**
-     * Add an item to the menu. The item's link is constructed from its label.
-     * @param label the item's label.
-     * @return the added item.
+     * Get the main menu's authentication menu.
+     * @return the main menu's authentication menu.
      */
-    public MainMenuItem addItem(String label) {
-        MainMenuItem item = new MainMenuItem();
-        
-        item.setLabel(label);
-        item.setLink("/MyBooks-Bookkeeping/" + label.toLowerCase());      //A change might be required here!
-        this.menuItems.add(item);
-        
-        return item;
+    public AuthenticationMenu getAuthenticationMenu() {
+        return this.authenticationMenu;
     }
-    
 }

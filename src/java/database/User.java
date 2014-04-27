@@ -110,13 +110,18 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
         this.userType = null;
     }
 
+    /**
+     * Construct a user from a result set.
+     * @param rs a result set that contains a user.
+     * @throws DBException if an error occurs while reading from the result set.
+     */
     public User(ResultSet rs) throws DBException {
         try {
             this.id = rs.getInt(User.CLMN_ID);
             this.mail = rs.getString(User.CLMN_MAIL);
             this.password = rs.getBytes(User.CLMN_PASSWORD);
-            this.firstname = rs.getString(User.CLMN_LASTNAME);
-            this.lastname = rs.getString(User.CLMN_FIRSTNAME);
+            this.firstname = rs.getString(User.CLMN_FIRSTNAME);
+            this.lastname = rs.getString(User.CLMN_LASTNAME);
             this.signUpDate = rs.getDate(User.CLMN_SIGN_UP_DATE);
             this.lastSignInDate = rs.getTimestamp(User.CLMN_LAST_SIGN_IN_DATE);
             this.userType = UserType.getUserTypeById(rs.getInt(User.CLMN_USER_TYPE));

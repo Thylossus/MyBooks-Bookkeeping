@@ -16,17 +16,10 @@
  */
 package tags;
 
-import controller.ScopeHandler;
-import database.User;
 import java.io.IOException;
-import java.util.ArrayList;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
-import model.components.auth.CheckUserCredentials;
 
 /**
  * Tag handler for the main menu tag.
@@ -35,28 +28,10 @@ import model.components.auth.CheckUserCredentials;
  */
 public class MainMenu extends SimpleTagSupport {
 
-    //Probably needs to be transferre to another class.
-    /**
-     * The project's name.
-     */
-    private static final String PROJECT_NAME = "MyBooks";
-
     /**
      * The bean of the main menu.
      */
     private beans.MainMenu mainMenu;
-    /**
-     * The projet's base url.
-     */
-    private String baseUrl;
-    /**
-     * Request object.
-     */
-    private HttpServletRequest request;
-    /**
-     * Response object.
-     */
-    private HttpServletResponse response;
 
     /**
      * Process the tags functionality.
@@ -68,20 +43,12 @@ public class MainMenu extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
 
         this.mainMenu = (beans.MainMenu) getJspContext().findAttribute("mainMenu");
-        this.baseUrl = (String) getJspContext().findAttribute("baseUrl");
-        this.request = (HttpServletRequest) ((PageContext) getJspContext()).getRequest();
-        this.response = (HttpServletResponse) ((PageContext) getJspContext()).getResponse();
-
-        if (this.baseUrl == null) {
-            //The base url should be in the page context scope but to ensure that everythins works as expected
-            //the base url is retrieved here again if it was not found.
-            this.baseUrl = "http://" + this.request.getServerName() + ":" + this.request.getServerPort() + this.request.getContextPath();
-        }
+       
         if (this.mainMenu != null) {
 
             JspWriter out = getJspContext().getOut();
             out.print(this.buildHead());
-            out.print(this.buildBody(this.mainMenu.getMenuItems()));
+            out.print(this.buildBody());
             out.print(this.buildTail());
 
         } else {
@@ -105,7 +72,7 @@ public class MainMenu extends SimpleTagSupport {
                 + "            <span class=\"icon-bar\"></span>\n"
                 + "            <span class=\"icon-bar\"></span>\n"
                 + "          </button>\n"
-                + "          <a class=\"navbar-brand\" href=\"" + this.baseUrl + "\"> " + MainMenu.PROJECT_NAME + "</a>\n"
+                + "          <a class=\"navbar-brand\" href=\"" + this.mainMenu.getBaseURL() + "\"> " + this.mainMenu.getTitle() + "</a>\n"
                 + "        </div>\n"
                 + "        <div class=\"collapse navbar-collapse\">\n"
                 + "          <ul class=\"nav navbar-nav\">\n";
@@ -116,32 +83,11 @@ public class MainMenu extends SimpleTagSupport {
      *
      * @return body of the menu's html code.
      */
-    private String buildBody(ArrayList<beans.MainMenuItem> items) {
+    private String buildBody() {
         String body = "";
 
-        for (beans.MainMenuItem item : items) {
-            body += "<li";
-
-            if (item.equals(this.mainMenu.getActiveItem())) {
-                body += " class=\"active\"";
-            }
-
-            body += "><a href=\"";
-            body += item.getLink();
-            body += "\">";
-            body += item.getLabel();
-
-            body += "</a>";
-
-            //Check whether a submenu is available.
-            if (item.getSubmenu() != null && !item.getSubmenu().isEmpty()) {
-                //TODO: check how to build a submenu with bootstrap...
-                body += "";
-                body += this.buildBody(item.getSubmenu());
-                body += "";
-            }
-
-            body += "</li>\n";
+        for (beans.MenuItem item : this.mainMenu.getMenuItems()) {
+            body += item.toString();
         }
 
         return body;
@@ -154,45 +100,11 @@ public class MainMenu extends SimpleTagSupport {
      */
     private String buildTail() {
         return "          </ul>\n"
-                + this.buildAuthenticationMenu()
+                + this.mainMenu.getAuthenticationMenu().toString()
                 + "        </div><!--/.nav-collapse -->\n"
                 + "      </div>\n"
                 + "    </div>";
     }
 
-    private String buildAuthenticationMenu() {
-        CheckUserCredentials cuc = new CheckUserCredentials(this.request, this.response);
-        if (cuc.validateLogIn()) {
-            User user = (User)ScopeHandler.getInstance().load(this.request, "user", "session");
-            return "<ul class=\"nav navbar-nav pull-right\">\n"
-                    + "  <li>\n"
-                    + "    <a href=\"#\">"
-                    + "      <span class=\"glyphicon glyphicon-user main-menu-glyphicon\"></span> "
-                    + user.getFirstname() + " "
-                    + user.getLastname()
-                    + " ("
-                    + user.getLastSignInDate().toString()
-                    + ")"
-                    + "    </a>"
-                    + "  </li>\n"
-                    + "  <li>\n"
-                    + "    <a href=\"" + this.baseUrl + "/auth/signout\"><span class=\"glyphicon glyphicon-off main-menu-glyphicon\"></span> Sign out</a>"
-                    + "  </li>\n"
-                    + "</ul>";
-        } else {
-            return "<ul class=\"nav navbar-nav pull-right\">\n"
-                    + "          <li class=\"dropdown\">\n"
-                    + "            <a class=\"dropdown-toggle\" href=\"#\" data-toggle=\"dropdown\">Login</a>\n"
-                    + "            <div class=\"dropdown-menu\">\n"
-                    + "              <form class=\"form-signin\" role=\"form\" method=\"POST\" action=\"" + this.baseUrl + "/auth/signin\"> \n"
-                    + "                <input name=\"mail\" class=\"form-control\" type=\"email\" placeholder=\"Email Address\" required autofocus> \n"
-                    + "                <input name=\"password\" class=\"form-control\" type=\"password\" placeholder=\"Password\" required><br>\n"
-                    + "                <button type=\"submit\" name=\"submit\" class=\"btn btn-lg btn-primary btn-block\">Login</button>\n"
-                    + "              </form>\n"
-                    + "            </div>\n"
-                    + "          </li>\n"
-                    + "        </ul>";
-        }
-    }
 
 }
