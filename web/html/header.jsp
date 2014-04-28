@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <link type="text/css" rel="stylesheet" href="${baseURL}/css/bootstrap-theme.min.css" />
         <link type="text/css" rel="stylesheet" href="${baseURL}/css/theme.css" />
         <link type="text/css" rel="stylesheet" href="${baseURL}/css/${pageName}.css" />
+        <script type="text/javascript" src="${baseURL}/js/jquery.min.js"></script>
     </head>
     <body>
         

@@ -89,5 +89,22 @@ public class Menu {
         return item;
     }
     
+    /**
+     * Set an item active by its label.
+     * @param label the label of the item, which shall be activated.
+     * @return true if the item could be activated and false if an error occured.
+     */
+    public boolean setActiveItem(String label) {
+        
+        for (MenuItem item : this.menuItems) {
+            if (item.getLabel().equals(label)) {
+                item.setActive();
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     
 }

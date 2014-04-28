@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .balance-sheet-list li.selected {
     color: #fff;
     background-color: #48c5ff;
+    border: 3px solid #000;
 }
 
 .balance-sheet-list li .glyphicon {
@@ -67,7 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     font-size: 10px;
     text-align: left;
     position: absolute;
-    bottom: 0;
+    bottom: 5px;
 }
 
 .balance-sheet-list li .balance-sheet-info span {

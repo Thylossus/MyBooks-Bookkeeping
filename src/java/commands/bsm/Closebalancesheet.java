@@ -18,8 +18,13 @@
 package commands.bsm;
 
 import commands.Command;
+import controller.ScopeHandler;
+import database.BalanceSheet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.ModelComponentFactory;
 import model.types.UserType;
 
 /**
@@ -35,8 +40,7 @@ public class Closebalancesheet extends Command{
      * @param response The response object of the request.
      */
     public Closebalancesheet (HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);        
-        this.viewFile = "/home.jsp";
+        super(request, response);   
         this.requiredUserType = UserType.STANDARD_USER;
     }
     
@@ -45,7 +49,17 @@ public class Closebalancesheet extends Command{
      * @return The relative location of the view's JSP file.
      */
     @Override
-    public String execute() {        
+    public String execute() {  
+        this.viewPath = "/MyBooks-Bookkeeping";
+        this.viewFile = "/bsm/balancesheets";
+        ScopeHandler.getInstance().store(this.request, "title", "Balance Sheet Management");
+        ScopeHandler.getInstance().store(this.request, "orderby", BalanceSheet.CLMN_DATE_OF_LAST_CHANGE);
+        try {
+            ModelComponentFactory.createModuleComponent(this.request, this.response, "CloseBalanceSheet").process();
+        } catch (Exception ex) {
+            Logger.getLogger(Closebalancesheet.class.getName()).log(Level.SEVERE, "Could not close the balance sheet.", ex);
+        }
+        
         return this.viewPath + this.viewFile;
     }
     

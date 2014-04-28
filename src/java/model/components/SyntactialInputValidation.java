@@ -129,7 +129,7 @@ public class SyntactialInputValidation extends ModelComponent{
      * @throws Exception if input is syntactically invalid.
      */
     private String generalValidation(Object input) throws Exception{
-        String validatedInput = input.toString();
+        String validatedInput = input.toString().trim();
         
         if (validatedInput.isEmpty()) {
             throw new Exception("Input invalid! (Empty input)");

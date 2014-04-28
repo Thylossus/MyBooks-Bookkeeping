@@ -36,6 +36,7 @@ public class URLProber {
     private final boolean isCommand;
     private final String resourceLocation;
     private final HashMap<String, String> params;
+    private String command;
     
     /**
      * Create a URLProber object to preprocess the URL of the incomming request.
@@ -46,9 +47,11 @@ public class URLProber {
             this.isCommand = false;
             this.resourceLocation = url;
             this.params = null;
+            this.command = null;
         } else {
             this.isCommand = true;
             this.params = new HashMap<>();
+            this.command = "Home";
             this.resourceLocation = this.getCommandResourceLocation(url);
         }
     }
@@ -98,6 +101,8 @@ public class URLProber {
                 for (int i = 0; i <= commandIndex; i++) {
                     url += "." + urlComponents[i];
                 }
+                
+                this.command = urlComponents[commandIndex];
             
             }
             //Extract parameters
@@ -139,4 +144,11 @@ public class URLProber {
         return this.params;
     }
     
+    /**
+     * Provide the parsed command.
+     * @return the parsed command or null if the URL was not a command URL.
+     */
+    public String getCommand() {
+        return this.command;
+    }
 }

@@ -16,7 +16,6 @@
  */
 package model.components.bsm;
 
-import commands.bsm.Balancesheets;
 import controller.ScopeHandler;
 import database.BalanceSheet;
 import database.DBFilter;
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.ModelComponent;
 import model.ModelComponentFactory;
-import tags.BalanceSheetOverview;
 
 /**
  * Loads a balance sheet with all its records and stores it in the session for
@@ -59,6 +57,7 @@ public class LoadBalanceSheet extends ModelComponent {
      */
     public LoadBalanceSheet(HttpServletRequest request, HttpServletResponse response) {
         super(request, response);
+        
     }
 
     /**

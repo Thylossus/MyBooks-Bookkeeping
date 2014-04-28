@@ -36,11 +36,12 @@ public class MenuItem {
     private String link;
 
     /**
-     * A string which identifies a bootstrap glyphicon. See http://getbootstrap.com/components/#glyphicons for the valid glyphicon identifiers.
-     * E.g. "glyphicon-asterisk".
+     * A string which identifies a bootstrap glyphicon. See
+     * http://getbootstrap.com/components/#glyphicons for the valid glyphicon
+     * identifiers. E.g. "glyphicon-asterisk".
      */
     private String glyphicon;
-    
+
     /**
      * The menu item's submenu (optional).
      */
@@ -50,6 +51,11 @@ public class MenuItem {
      * True if the menu item is active and false otherwise.
      */
     private boolean active;
+
+    /**
+     * True if the menu item is disabled and false otherwise.
+     */
+    private boolean disabled;
 
     /**
      * Construct a menu item.
@@ -100,7 +106,9 @@ public class MenuItem {
 
     /**
      * Set the glyphicon identifier for the menu item.
-     * @param glyphicon a string that represents a glyphicon (e.g. "glyphicon-asterisk").
+     *
+     * @param glyphicon a string that represents a glyphicon (e.g.
+     * "glyphicon-asterisk").
      */
     public void setGlyphicon(String glyphicon) {
         this.glyphicon = glyphicon;
@@ -139,6 +147,24 @@ public class MenuItem {
     public boolean isActive() {
         return this.active;
     }
+    
+    /**
+     * Transform the menu item into a disabled menu item.
+     */
+    public void setDisabled() {
+        this.disabled = true;
+    }
+
+    /**
+     * Check whether the menu item is disabled or not.
+     *
+     * @return True if the menu item is disabled and false if not.
+     */
+    public boolean isDisabled() {
+        return this.disabled;
+    }
+    
+    
 
     /**
      * Transform the menu item into a string with its html representation.
@@ -149,51 +175,53 @@ public class MenuItem {
     public String toString() {
         String html = "<li";
 
+        html += " class=\"";
+
+        if (this.active) {
+            html += "active ";
+        }
+        
+        if (this.disabled) {
+            html += "disabled ";
+        }
+
         //Check whether a submenu is available.
         if (this.submenu != null && this.submenu.size() > 0) {
 
-            html += " class=\"";
-            
-            if (this.active) {
-                html += "active ";
-            }
-            
             html += "dropdown\">";
-            
+
             html += "<a "
                     + "href=\"" + this.link + "\" "
                     + "class=\"dropdown-toggle\" "
                     + "data-toggle=\"dropdown\">";
-            
+
             if (!this.glyphicon.isEmpty()) {
                 html += "<span class=\"glyphicon " + this.glyphicon + "\"></span> ";
             }
-            
+
             html += this.label
                     + " <b class=\"caret\"></b>"
                     + "</a>";
-            
+
             html += "<ul class=\"dropdown-menu\">\n";
-            
+
             for (MenuItem item : this.submenu) {
                 html += item.toString();
             }
-            
+
             html += "</ul>\n";
 
         } else {
-            if (this.active) {
-                html += " class=\"active\"";
-            }
+            html += "\"";
 
             html += "><a href=\"";
             html += this.link;
             html += "\">";
-            
+
             if (!this.glyphicon.isEmpty()) {
                 html += "<span class=\"glyphicon " + this.glyphicon + "\"></span> ";
             }
-            
+
             html += this.label;
 
             html += "</a>";

@@ -19,6 +19,7 @@ package model.components;
 import beans.MainMenu;
 import beans.Menu;
 import controller.ScopeHandler;
+import controller.URLProber;
 import database.User;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +38,7 @@ public class CreateMainMenu extends ModelComponent {
     /**
      * The active user. If no user is logged in, this field is null.
      */
-    private User activeUser;
+    private final User activeUser;
 
     /**
      * Construct a CreateMainMenu object
@@ -60,10 +61,11 @@ public class CreateMainMenu extends ModelComponent {
      */
     @Override
     public void process() {
+        URLProber up = (URLProber)ScopeHandler.getInstance().load(this.request, "url");
         String baseURL = "http://" + this.request.getServerName() + ":" + this.request.getServerPort() + this.request.getContextPath();
         MainMenu mainMenu = new MainMenu("MyBooks", baseURL);
         mainMenu.setAuthenticationMenu(this.activeUser);
-        mainMenu.addItem("Home").setActive();
+        mainMenu.addItem("Home");
         mainMenu.addItem("Download");
         mainMenu.addItem("About");
         mainMenu.addItem("Help");
@@ -72,8 +74,10 @@ public class CreateMainMenu extends ModelComponent {
             Menu bsmSubmenu = new Menu();
             
             bsmSubmenu.addItem("Management", mainMenu.getBaseURL() + "/bsm/balancesheets");
-            bsmSubmenu.addItem("Create Balance Sheet", mainMenu.getBaseURL() + "/bsm/createbalancesheet#titleInput");
-            bsmSubmenu.addItem("Open Editor", mainMenu.getBaseURL() + "/bsm/openbalancesheeteditor");
+            bsmSubmenu.addItem("Create balance sheet", mainMenu.getBaseURL() + "/bsm/createbalancesheet#titleInput");
+            bsmSubmenu.addItem("Open in editor", mainMenu.getBaseURL() + "/bsm/openbalancesheeteditor").setDisabled();
+            bsmSubmenu.addItem("View", mainMenu.getBaseURL() + "/bsm/viewbalancesheet").setDisabled();
+            bsmSubmenu.addItem("Delete", mainMenu.getBaseURL() + "/bsm/deletebalancesheet").setDisabled();
             
             mainMenu.addItem("Balance Sheets", bsmSubmenu.getMenuItems());
             if (this.activeUser.getUserType().getId() >= UserType.NEWS_WRITER.getId()) {
@@ -88,6 +92,11 @@ public class CreateMainMenu extends ModelComponent {
             }
         }
 
+        if (up != null) {
+            //Not sufficient!
+            mainMenu.setActiveItem(up.getCommand());
+        }
+        
         ScopeHandler.getInstance().store(request, "mainMenu", mainMenu);
     }
 

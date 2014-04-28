@@ -19,6 +19,9 @@ package model;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.components.*;
+import model.components.auth.*;
+import model.components.bsm.*;
 
 /**
  * Construct specific model components by a string identifier.
@@ -38,21 +41,25 @@ public abstract class ModelComponentFactory {
     public static ModelComponent createModuleComponent(HttpServletRequest request, HttpServletResponse response, String identifier) throws Exception{
         switch (identifier) {
             case "CreateDataList":
-                return new model.components.CreateDataList(request, response);
+                return new CreateDataList(request, response);
             case "SemanticInputValidation":
-                return new model.components.SemanticInputValidation(request, response);
+                return new SemanticInputValidation(request, response);
             case "SyntactialInputValidation":
-                return new model.components.SyntactialInputValidation(request, response);
+                return new SyntactialInputValidation(request, response);
             case "RegisterUser":
-                return new model.components.auth.RegisterUser(request, response);
+                return new RegisterUser(request, response);
             case "CreateMainMenu":
-                return new model.components.CreateMainMenu(request, response);
+                return new CreateMainMenu(request, response);
             case "CheckUserCredentials":
-                return new model.components.auth.CheckUserCredentials(request, response);
+                return new CheckUserCredentials(request, response);
             case "CreateBalanceSheet":
-                return new model.components.bsm.CreateBalanceSheet(request, response);
+                return new CreateBalanceSheet(request, response);
             case "LoadBalanceSheet":
-                return new model.components.bsm.LoadBalanceSheet(request, response);
+                return new LoadBalanceSheet(request, response);
+            case "CloseBalanceSheet":
+                return new CloseBalanceSheet(request, response);
+            case "DeleteBalanceSheet":
+                return new DeleteBalanceSheet(request, response);
             default:
                 throw new Exception("Invalid identifier for a model component!");
         }

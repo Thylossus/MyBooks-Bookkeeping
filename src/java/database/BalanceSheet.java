@@ -17,6 +17,7 @@
 
 package database;
 
+import beans.Date;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,13 +27,14 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 /**
  * Active record for balance sheets
  * @author Tobias Kahse <tobias.kahse@outlook.com>
- * @version 0.1
  */
-public class BalanceSheet extends ActiveRecord implements DBDeletable, DBInsertable, DBUpdatable{
+public class BalanceSheet extends ActiveRecord implements DBDeletable, DBInsertable, DBUpdatable, JSONable{
 
     //Tables
     /**
@@ -378,6 +380,29 @@ public class BalanceSheet extends ActiveRecord implements DBDeletable, DBInserta
      */
     public void setOwner(int owner) {
         this.owner = owner;
+    }
+
+    /**
+     * Transforms the balance sheet to a JSON object.
+     * @return the JSON object representation of the balance sheet.
+     */
+    @Override
+    public JsonObject toJSON() {
+        Date dateDateOfLastChange = new Date();
+        dateDateOfLastChange.setCalendar(this.dateOfLastChange);
+        Date dateDateOfCreation = new Date();
+        dateDateOfCreation.setCalendar(this.dateOfCreation);
+        
+        
+        JsonObject jo = Json.createObjectBuilder()
+                .add("id", this.id)
+                .add("title", this.title)
+                .add("dateOfLastChange", dateDateOfLastChange.toString())
+                .add("dateOfCreation", dateDateOfCreation.toString())
+                .add("owner", this.owner)
+                .build();
+        
+        return jo;
     }
     
     

@@ -18,7 +18,7 @@
         <div class="panel-body">
             <div class="balance-sheets">
                 <sys:BalanceSheetOverview data="${requestScope.dataList}" order="${requestScope.orderby}">
-                    <li>
+                    <li data-title="${bsTitle}">
                         <h4>
                             <c:out value="${bsTitle}" />
                         </h4>
@@ -49,7 +49,7 @@
                 <div class="col-lg-5">
                     <form action="${baseURL}/bsm/createbalancesheet" method="POST">
                         <div class="input-group">
-                            <input type="text" class="form-control" name="title" placeholder="Enter a title for a new balance sheet" autofocus required>
+                            <input type="text" class="form-control" name="title" placeholder="Enter a title for a new balance sheet" required>
                             <span class="input-group-btn">
                                 <button class="btn btn-default" name="submit" type="submit"><span class="glyphicon glyphicon-plus"></span></button>
                             </span>
@@ -62,8 +62,24 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(funtion(){
-        alert("Hallo Welt!");
+    $(document).ready(function() {
+        var menuDisabled = true;
+
+        $(".balance-sheet-list li").click(function() {
+            $(".balance-sheet-list li.selected").removeClass("selected");
+            $(this).addClass("selected");
+
+            if (menuDisabled) {
+                $("li.disabled").removeClass("disabled");
+            }
+
+            //Update balance sheet in session!
+            $.ajax({
+                url: "${baseURL}/bsm/loadbalancesheet",
+                type: "POST",
+                data: "title=" + $(".selected").data("title") + "&submit=true"
+            });
+        });
     });
 </script>
 

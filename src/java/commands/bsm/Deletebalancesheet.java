@@ -18,14 +18,18 @@
 package commands.bsm;
 
 import commands.Command;
+import controller.ScopeHandler;
+import database.BalanceSheet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.ModelComponentFactory;
 import model.types.UserType;
 
 /**
  * Deletebalancesheet command
  * @author Tobias Kahse <tobias.kahse@outlook.com>
- * @version 0.1
  */
 public class Deletebalancesheet extends Command{
 
@@ -35,8 +39,7 @@ public class Deletebalancesheet extends Command{
      * @param response The response object of the request.
      */
     public Deletebalancesheet (HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);        
-        this.viewFile = "/home.jsp";
+        super(request, response);   
         this.requiredUserType = UserType.STANDARD_USER;
     }
     
@@ -45,7 +48,20 @@ public class Deletebalancesheet extends Command{
      * @return The relative location of the view's JSP file.
      */
     @Override
-    public String execute() {        
+    public String execute() {     
+        
+        //Delete the balance sheet in the session.
+        try {
+            ModelComponentFactory.createModuleComponent(this.request, this.response, "DeleteBalanceSheet").process();
+        } catch (Exception ex) {
+            Logger.getLogger(Deletebalancesheet.class.getName()).log(Level.SEVERE, "Could not delete the balance sheet.", ex);
+        }
+        
+        this.viewPath = "/MyBooks-Bookkeeping";
+        this.viewFile = "/bsm/balancesheets";
+        ScopeHandler.getInstance().store(this.request, "title", "Balance Sheet Management");
+        ScopeHandler.getInstance().store(this.request, "orderby", BalanceSheet.CLMN_DATE_OF_LAST_CHANGE);
+        
         return this.viewPath + this.viewFile;
     }
     
