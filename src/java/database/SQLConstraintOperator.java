@@ -28,34 +28,34 @@ public enum SQLConstraintOperator {
     /**
      * Check whether two values are equal.
      */
-    EQUAL("", "", " = ", new Class[]{String.class}),
+    EQUAL("", "", " = ", new Class[]{Number.class}),
     /**
      * Check whether the "left" value is greater than the "right" value.
      */
-    GREATER_THAN("", "", " > ", new Class[]{String.class}),
+    GREATER_THAN("", "", " > ", new Class[]{Number.class}),
     /**
      * Check whether the "left" value is less than the "right" value.
      */
-    LESS_THAN("", "", " < ", new Class[]{String.class}),
+    LESS_THAN("", "", " < ", new Class[]{Number.class}),
     /**
      * Check whether the "left" value is greater than or equal to the "right" value.
      */
-    GREATER_EQUAL("", "", " >= ", new Class[]{String.class}),
+    GREATER_EQUAL("", "", " >= ", new Class[]{Number.class}),
     /**
      * Check whether the "left" value is less than or equal to the "right" value.
      */
-    LESS_EQUAL("", "", " <= ", new Class[]{String.class}),
+    LESS_EQUAL("", "", " <= ", new Class[]{Number.class}),
     /**
      * Check whether the "left" value is not equal to the "right" value.
      */
-    INEQUAL("", "", " <> ", new Class[]{String.class}),
-    /**
-     * Check whether the "left" value is greater than the "right" value.
-     */
-    LIKE("", "'", " LIKE '", new Class[]{String.class}),
+    INEQUAL("", "", " <> ", new Class[]{Number.class}),
     /**
      * Check whether the "left" value is simliar to the "right" value. The right value can be modified by wildcards (e.g. %).
      * Use LIKE for strings!
+     */
+    LIKE("", "'", " LIKE '", new Class[]{String.class}),
+    /**
+     * Check whether the "left" value is between the two provided values.
      */
     BETWEEN("", "", " BETWEEN ", new Class[]{ArrayList.class, String.class}),
     /**

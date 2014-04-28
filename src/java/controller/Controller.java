@@ -24,20 +24,22 @@ public class Controller extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        Command command  = CommandFactory.createCommand(request, response);
+
+        Command command = CommandFactory.createCommand(request, response);
 
         String view = command.execute();
 
-        if (view.contains(".jsp")) {
-            RequestDispatcher rd = request.getRequestDispatcher(view);
-            rd.forward(request, response);
-        } else {
+        if (ScopeHandler.getInstance().load(request, "dispatch") == null || (boolean) ScopeHandler.getInstance().load(request, "dispatch")) {
+            if (view.contains(".jsp")) {
+                RequestDispatcher rd = request.getRequestDispatcher(view);
+                rd.forward(request, response);
+            } else {
             //If the given view is not a jsp page, use a redirect instead of the forward.
-            //The viewPath has to be "/MyBooks-Bookkeeping"
-            response.sendRedirect(view);
+                //The viewPath has to be "/MyBooks-Bookkeeping"
+                response.sendRedirect(view);
+            }
         }
     }
 

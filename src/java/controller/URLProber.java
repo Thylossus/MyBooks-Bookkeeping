@@ -17,19 +17,25 @@
 
 package controller;
 
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 /**
  * This class is a preprocessor for incomming requests. It scans the requested
  * URL/URI and provides the locations of requested resources in the appropriated
  * format for <code>Controller</code>, <code>CommandFactory</code>,and others.
+ * Furthermore it scanns paramters in the url. If a part of the URL contains a 
+ * hyphen "-", this part is recognised as a parameter and will be ignored for the
+ * building of the command URL. Parameters must be placed at the end of the 
+ * URL. Parameters are of the form: Key-Value.
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  * @version 0.1
  */
 public class URLProber {
 
-    private boolean isCommand;
-    private String resourceLocation;
+    private final boolean isCommand;
+    private final String resourceLocation;
+    private final HashMap<String, String> params;
     
     /**
      * Create a URLProber object to preprocess the URL of the incomming request.
@@ -39,8 +45,10 @@ public class URLProber {
         if (Pattern.matches(".*[.].*", url)) {
             this.isCommand = false;
             this.resourceLocation = url;
+            this.params = null;
         } else {
             this.isCommand = true;
+            this.params = new HashMap<>();
             this.resourceLocation = this.getCommandResourceLocation(url);
         }
     }
@@ -62,19 +70,43 @@ public class URLProber {
             
             //Separate URL components to modify class part
             String urlComponents[] = url.split("/");
-            //Change first letter of class to upper case to match command naming
-            //convention
-            urlComponents[urlComponents.length-1] = 
-                    urlComponents[urlComponents.length-1]
-                            .substring(0, 1)
-                            .toUpperCase()
-                    + urlComponents[urlComponents.length-1].substring(1);
-
-            //Build translated URI
-            url = "commands";
-            for(String urlComponent : urlComponents) {
-                url += "." + urlComponent;
+            int commandIndex = urlComponents.length-1;
+            
+            //Scan for parameters
+            for (int i = 0; i <urlComponents.length && commandIndex == urlComponents.length-1; i++) {
+                if (urlComponents[i].contains("-")) {
+                    //Parameter found
+                    commandIndex = i - 1;
+                    //Loop will be terminated because the commandIndex has changed.
+                }
             }
+            
+            if (commandIndex == -1) {
+                url = "commands.Home";
+            } else {
+            
+                //Change first letter of class to upper case to match command naming
+                //convention
+                urlComponents[commandIndex] = 
+                        urlComponents[commandIndex]
+                                .substring(0, 1)
+                                .toUpperCase()
+                        + urlComponents[commandIndex].substring(1);
+
+                //Build translated URI
+                url = "commands";
+                for (int i = 0; i <= commandIndex; i++) {
+                    url += "." + urlComponents[i];
+                }
+            
+            }
+            //Extract parameters
+            String[] param;
+            for (int i = commandIndex + 1; i < urlComponents.length; i++) {
+                param = urlComponents[i].split("-");
+                this.params.put(param[0], param[1]);
+            }
+            
             
         } else {
             url = "commands.Home";
@@ -97,6 +129,14 @@ public class URLProber {
      */
     public String getResourceLocation() {
         return this.resourceLocation;
+    }
+    
+    /**
+     * Provide the scanned parameters.
+     * @return a hash map containing the parameters.
+     */
+    public HashMap<String, String> getParams() {
+        return this.params;
     }
     
 }

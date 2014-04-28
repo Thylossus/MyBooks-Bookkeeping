@@ -31,7 +31,7 @@ public class AuthenticationMenu {
      */
     private User activeUser;
 
-    private String baseURL;
+    private final String baseURL;
 
     public AuthenticationMenu(String baseURL) {
         this.activeUser = null;
@@ -52,13 +52,15 @@ public class AuthenticationMenu {
         MenuItem[] menuItems = new MenuItem[2];
         if (this.activeUser != null) {
             MenuItem user = new MenuItem();
-            user.setLabel(this.activeUser.getFirstname() + " " + this.activeUser.getLastname() + " (" + this.activeUser.getLastSignInDate().toString() + ")");
+            user.setLabel(this.activeUser.getFirstname() 
+                    + " " + this.activeUser.getLastname()
+                    + " (" + this.activeUser.getLastSignInDate().toString() + ")");
             user.setLink("#");
             user.setGlyphicon("glyphicon-user");
             MenuItem signout = new MenuItem();
             signout.setLabel("Sign out");
             signout.setLink(baseURL + "/auth/signout");
-            signout.setGlyphicon("glyphicon-off");
+            signout.setGlyphicon("glyphicon-log-out");
             
             menuItems[0] = user;
             menuItems[1] = signout;
@@ -69,12 +71,13 @@ public class AuthenticationMenu {
             MenuItem signin = new MenuItem();
             signin.setLabel("Sign in");
             signin.setLink(this.baseURL + "/auth/signin");
+            signin.setGlyphicon("glyphicon-log-in");
 
             menuItems[0] = signup;
             menuItems[1] = signin;
         }
         
-        return "<ul class=\"nav navbar-nav pull-right\">\n"
+        return "<ul class=\"nav navbar-nav navbar-right\">\n"
                     + menuItems[0].toString()
                     + menuItems[1].toString()
                     + "</ul>";

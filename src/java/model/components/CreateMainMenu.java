@@ -72,7 +72,7 @@ public class CreateMainMenu extends ModelComponent {
             Menu bsmSubmenu = new Menu();
             
             bsmSubmenu.addItem("Management", mainMenu.getBaseURL() + "/bsm/balancesheets");
-            bsmSubmenu.addItem("Create Balance Sheet", mainMenu.getBaseURL() + "/bsm/createbalancesheet");
+            bsmSubmenu.addItem("Create Balance Sheet", mainMenu.getBaseURL() + "/bsm/createbalancesheet#titleInput");
             bsmSubmenu.addItem("Open Editor", mainMenu.getBaseURL() + "/bsm/openbalancesheeteditor");
             
             mainMenu.addItem("Balance Sheets", bsmSubmenu.getMenuItems());

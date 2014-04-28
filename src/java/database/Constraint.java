@@ -36,8 +36,9 @@ public class Constraint {
      */
     private final SQLConstraintOperator operator;
     /**
-     * Depending on the operator the value can be a string, a list of strings or
-     * a list of constraints (for cascaded constraints with AND and OR).
+     * Depending on the operator the value can be a string, a number, a list of
+     * strings or a list of constraints (for cascaded constraints with AND and
+     * OR).
      */
     private final Object value;
 
@@ -47,9 +48,9 @@ public class Constraint {
      * @param attribute Column that will be used for the constraint. Use the
      * constant column names provided by an active record.
      * @param operator One of the supported SQL constraint operators.
-     * @param value Depending on the operator the value can be a string, a list
-     * of strings or a list of constraints (for cascaded constraints with AND
-     * and OR).
+     * @param value Depending on the operator the value can be a string, a
+     * number, a list of strings or a list of constraints (for cascaded
+     * constraints with AND and OR).
      */
     public Constraint(String attribute, SQLConstraintOperator operator, Object value) {
         this.attribute = attribute;
@@ -75,39 +76,39 @@ public class Constraint {
                     //have to check whether the amount of elements in the list
                     //is correct.
                     //We expect exactly TWO constraints for the AND operator.
-                    if (((ArrayList)this.value).size() != 2) {
+                    if (((ArrayList) this.value).size() != 2) {
                         return "";
                     }
-                    constraint += ((ArrayList)this.value).get(0);
+                    constraint += ((ArrayList) this.value).get(0);
                     constraint += this.operator.getOperator();
-                    constraint += ((ArrayList)this.value).get(1);
+                    constraint += ((ArrayList) this.value).get(1);
                     break;
                 case BETWEEN:
                     //We have already checked the type of the value but we also
                     //have to check whether the amount of elements in the list
                     //is correct.
                     //We expect exactly TWO strings for the BETWEEN operator.
-                    if (((ArrayList)this.value).size() != 2) {
+                    if (((ArrayList) this.value).size() != 2) {
                         return "";
                     }
                     constraint += this.attribute;
                     constraint += this.operator.getOperator();
-                    constraint += ((ArrayList)this.value).get(0);
+                    constraint += ((ArrayList) this.value).get(0);
                     constraint += " AND ";
-                    constraint += ((ArrayList)this.value).get(1);
+                    constraint += ((ArrayList) this.value).get(1);
                     break;
                 case IN:
                     //We have already checked the type of the value but we also
                     //have to check whether the amount of elements in the list
                     //is correct.
                     //We expect the list not to be empty.
-                    if (((ArrayList)this.value).isEmpty()) {
+                    if (((ArrayList) this.value).isEmpty()) {
                         return "";
                     }
                     constraint += this.attribute;
                     constraint += this.operator.getOperator();
-                    Iterator iter = ((ArrayList)this.value).iterator();
-                    while(iter.hasNext()) {
+                    Iterator iter = ((ArrayList) this.value).iterator();
+                    while (iter.hasNext()) {
                         constraint += iter.next().toString();
                         if (iter.hasNext()) {
                             constraint += ", ";
@@ -122,19 +123,19 @@ public class Constraint {
                     //have to check whether the amount of elements in the list
                     //is correct.
                     //We expect exactly TWO constraints for the OR operator.
-                    if (((ArrayList)this.value).size() != 2) {
+                    if (((ArrayList) this.value).size() != 2) {
                         return "";
                     }
-                    constraint += ((ArrayList)this.value).get(0);
+                    constraint += ((ArrayList) this.value).get(0);
                     constraint += this.operator.getOperator();
-                    constraint += ((ArrayList)this.value).get(1);
+                    constraint += ((ArrayList) this.value).get(1);
                     break;
                 default:
                     constraint = this.attribute
                             + this.operator.getOperator()
                             + this.value.toString();
             }
-            
+
             constraint += this.operator.getEndTag();
 
             return constraint;
@@ -145,7 +146,9 @@ public class Constraint {
     }
 
     /**
-     * Evaluate the given value/s with respect to their data type.
+     * Evaluate the given value/s with respect to their data type if an expected
+     * data type is provided.
+     *
      * @return True if the value is valid and false if it is not.
      */
     private boolean evaluateValue() {
@@ -155,7 +158,7 @@ public class Constraint {
                 //There is a second data type in the expected value array.
                 //This indicates that we have to handle an array list.
                 //Check whether all elements of the list have the expeced type.
-                for (Object listElement : (ArrayList)this.value) {
+                for (Object listElement : (ArrayList) this.value) {
                     if (!expectedValue[1].isInstance(listElement)) {
                         return false;
                     }
@@ -164,6 +167,14 @@ public class Constraint {
                 return true;
             } else {
                 return true;
+            }
+        } else if (expectedValue[0].equals(Number.class)) {
+            if (this.value.getClass().equals(int.class)
+                    || this.value.getClass().equals(double.class)
+                    || this.value.getClass().equals(float.class)) {
+                return true;
+            } else {
+                return false;
             }
         } else {
             return false;

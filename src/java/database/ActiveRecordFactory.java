@@ -39,6 +39,10 @@ public abstract class ActiveRecordFactory {
             return User.class;
         }
         
+        if (BalanceSheet.SELECT_TABLE.equalsIgnoreCase(table)) {
+            return BalanceSheet.class;
+        }
+        
         //If no active records has the specified select table, throw an exception.
         throw new Exception("Could not find any active record, which uses the specified select table!");
     }

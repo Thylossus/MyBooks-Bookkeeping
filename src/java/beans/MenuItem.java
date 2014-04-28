@@ -189,6 +189,11 @@ public class MenuItem {
             html += "><a href=\"";
             html += this.link;
             html += "\">";
+            
+            if (!this.glyphicon.isEmpty()) {
+                html += "<span class=\"glyphicon " + this.glyphicon + "\"></span> ";
+            }
+            
             html += this.label;
 
             html += "</a>";

@@ -16,9 +16,12 @@
  */
 package commands;
 
+import controller.ScopeHandler;
 import controller.URLProber;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +54,20 @@ public abstract class CommandFactory {
 
         //Get URLProber object from request scope
         URLProber up = (URLProber) request.getAttribute("url");
+        
+        //Set up parameters from url
+        HashMap<String, String> params = up.getParams();
+        //A list of parameters that cannot be set by the url because they are reserved by the system
+        String[] prohibitedParameterKeys = new String[]{"menu", "title", "inputValidation", "dataList", "dispatch", "url"};
+        Arrays.sort(prohibitedParameterKeys);
+        if (!params.isEmpty()) {
+            for(String key : params.keySet()) {
+                //Check if key is prohibited
+                if (Arrays.binarySearch(prohibitedParameterKeys, key) < 0) {
+                    ScopeHandler.getInstance().store(request, key, params.get(key));
+                }
+            }
+        }
 
         //Initialise view path
         String viewPath = "/html";

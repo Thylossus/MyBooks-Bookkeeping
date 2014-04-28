@@ -1,0 +1,75 @@
+/*
+Copyright (C) 2014 Tobias Kahse <tobias.kahse@outlook.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+/* 
+    Created on : 27.04.2014, 22:20:58
+    Author     : Tobias Kahse <tobias.kahse@outlook.com>
+*/
+
+.balance-sheets {
+    overflow: hidden;
+}
+
+.balance-sheet-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.balance-sheet-list li {
+    float: left;
+    width: 158px;
+    height: 223px;
+    padding: 10px;
+    line-height: 1.4;
+    border: 1px solid #fff;
+    background-color: #f9f9f9;
+    word-wrap: break-word;
+    cursor: pointer;
+    position: relative;
+}
+
+.balance-sheet-list li:hover {
+    color: #fff;
+    background-color: #48c5ff;
+}
+
+.balance-sheet-list li.selected {
+    color: #fff;
+    background-color: #48c5ff;
+}
+
+.balance-sheet-list li .glyphicon {
+    margin-top: 90px;
+    margin-left: 34px;
+    font-size: 80px;
+    position: absolute;
+}
+
+.balance-sheet-list li h4 {
+    margin-top: 2px;
+    text-align: left;
+}
+
+.balance-sheet-list li .balance-sheet-info {
+    font-size: 10px;
+    text-align: left;
+    position: absolute;
+    bottom: 0;
+}
+
+.balance-sheet-list li .balance-sheet-info span {
+    display: block;
+}

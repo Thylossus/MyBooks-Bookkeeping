@@ -19,8 +19,12 @@ package commands.bsm;
 
 
 import commands.Command;
-import commands.Home;
 import controller.ScopeHandler;
+import database.BalanceSheet;
+import database.DBFilter;
+import database.SQLConstraintOperator;
+import database.User;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +47,8 @@ public class Balancesheets extends Command{
     public Balancesheets (HttpServletRequest request, HttpServletResponse response) {
         super(request, response);     
         this.requiredUserType = UserType.STANDARD_USER;
-        this.viewFile = "/home.jsp";
+        this.viewFile = "/balancesheets.jsp";
+        ScopeHandler.getInstance().store(request, "title", "Balance Sheet Management");
     }
     
     /**
@@ -52,13 +57,66 @@ public class Balancesheets extends Command{
      */
     @Override
     public String execute() {   
+        User user = (User)ScopeHandler.getInstance().load(this.request, "user", "session");
+        boolean dispatch = true;
+        if (ScopeHandler.getInstance().load(this.request, "dispatch") != null) {
+            dispatch = (boolean)ScopeHandler.getInstance().load(this.request, "dispatch");
+        }
+        
+        String orderBy = (String)ScopeHandler.getInstance().load(this.request, "orderby");
+        if (orderBy == null || orderBy.isEmpty()) {
+            orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE;
+        } else {
+            //Validate the entered orderBy statements to prevent SQL injections
+            //and ensure that the upper case version of the column name is used.
+            if (orderBy.equalsIgnoreCase(BalanceSheet.CLMN_DATE_OF_CREATION)) {
+                orderBy = BalanceSheet.CLMN_DATE_OF_CREATION;
+            } else if (orderBy.equalsIgnoreCase(BalanceSheet.CLMN_DATE_OF_LAST_CHANGE)) {
+                orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE;
+            } else if (orderBy.equalsIgnoreCase(BalanceSheet.CLMN_TITLE)) {
+                orderBy = BalanceSheet.CLMN_TITLE;
+            } else {
+                orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE;
+            }
+        }
+        //Update value in request scope after validation
+        ScopeHandler.getInstance().store(this.request, "orderby", orderBy);
+        
+        //User should be available because the command factory already checked the login and this command cannot be called if no one is logged in.
+        if (user != null) {
+            
+            if (!dispatch) {
+                DBFilter filter = new DBFilter();
+                filter.addConstraint(BalanceSheet.CLMN_OWNER, SQLConstraintOperator.EQUAL, user.getId());
+
+                HashMap<String,Object> dataListParameters = new HashMap<>();
+                dataListParameters.put("tableName", BalanceSheet.SELECT_TABLE);
+                dataListParameters.put("dbFilter", filter);
+                dataListParameters.put("orderByColumns", new String[]{orderBy});
+
+                try {
+                    ModelComponentFactory.createModuleComponent(this.request, this.response, "CreateDataList")
+                            .provideParameters(dataListParameters)
+                            .process();
+
+                } catch (Exception ex) {
+                    Logger.getLogger(Balancesheets.class.getName()).log(Level.SEVERE, "Could not create data list.", ex);
+                }
+            }
+            
+        } else {
+            this.viewPath = "/MyBooks-Bookkeeping";
+            this.viewFile = "/home";
+            ScopeHandler.getInstance().store(request, "title", "Home");
+        }
+        
         try {
             ModelComponentFactory.createModuleComponent(this.request, this.response, "CreateMainMenu").process();
         } catch (Exception ex) {
-            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Balancesheets.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        ScopeHandler.getInstance().store(request, "title", "Home");
+        
         
         return this.viewPath + this.viewFile;
     }

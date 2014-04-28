@@ -18,8 +18,6 @@
 package database;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -32,7 +30,7 @@ public class DBFilter {
     /**
      * A list of constraints for the filter.
      */
-    private ArrayList<Constraint> constraints;
+    private final ArrayList<Constraint> constraints;
     
     /**
      * Construct a filter object.

@@ -68,11 +68,11 @@ public class CreateDataList extends ModelComponent{
                 //Check which parameters are required.
                 if (this.orderByColumns != null && this.dbFilter != null) {
                     //ordering and filtering is required
-                    paramClasses = new Class[]{String.class, DBFilter.class};
+                    paramClasses = new Class[]{String[].class, DBFilter.class};
                     paramValues = new Object[]{this.orderByColumns, this.dbFilter};
                 } else if (this.orderByColumns != null) {
                     //only ordering is required
-                    paramClasses = new Class[]{String.class};
+                    paramClasses = new Class[]{String[].class};
                     paramValues = new Object[]{this.orderByColumns};
                 } else if (this.dbFilter != null) {
                     //only filtering is required

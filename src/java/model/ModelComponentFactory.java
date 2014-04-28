@@ -49,6 +49,10 @@ public abstract class ModelComponentFactory {
                 return new model.components.CreateMainMenu(request, response);
             case "CheckUserCredentials":
                 return new model.components.auth.CheckUserCredentials(request, response);
+            case "CreateBalanceSheet":
+                return new model.components.bsm.CreateBalanceSheet(request, response);
+            case "LoadBalanceSheet":
+                return new model.components.bsm.LoadBalanceSheet(request, response);
             default:
                 throw new Exception("Invalid identifier for a model component!");
         }

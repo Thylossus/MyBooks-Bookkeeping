@@ -8,4 +8,20 @@
     <tag-class>tags.MainMenu</tag-class>
     <body-content>empty</body-content>
   </tag>
+  <tag>
+    <name>BalanceSheetOverview</name>
+    <tag-class>tags.BalanceSheetOverview</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+        <name>data</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+        <type>java.util.ArrayList</type>
+    </attribute>
+    <attribute>
+      <name>order</name>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+  </tag>
 </taglib>

@@ -27,6 +27,11 @@ import model.components.Input;
 public class BalanceSheet extends Context{
 
     /**
+     * The balance sheet's title.
+     */
+    private String title;
+    
+    /**
      * Construct the balance sheet context.
      * @param inputList 
      */
@@ -40,7 +45,23 @@ public class BalanceSheet extends Context{
      */
     @Override
     public boolean validate() {
-        return false;
+        //Check required parameters
+        //Check title
+        if (inputList.get(0).getKey().equals("title")) {
+            this.title = (String)inputList.get(0).getValue();
+        } else {
+            this.title = (String)this.searchInputValue("title");
+            if (this.title == null) {
+                return false;
+            }
+        }
+        
+        //Check length of title
+        if (this.title.toString().length() > 30) {
+            return false;
+        }
+        
+        return true;
     }
     
 }
