@@ -22,3 +22,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .btn-group-vertical {
     width: 100%;
 }
+
+/* Records */
+.income td.rAmount {
+    color: #00b615;
+}
+
+.expense td.rAmount {
+    color: #ff261c;
+}
+
+.rCatColour {
+    width: 1px !important;
+    padding-left: 1px !important;
+    padding-right: 1px !important;
+}
+
+.record {
+    cursor: pointer;
+}
+
+td.rAmount {
+    text-align: right;
+}
+
+.rSum, .rSumLabel {
+    text-align: right;
+}
+
+.record-selected {
+    font-weight: bold;
+    background-color: #f5f5f5;
+}
+
+.alert {
+    display: none;
+}
+
+.month-selection {
+    margin-top: 30px;
+}
+
+.year-selection {
+    margin-top: 10px;
+}
+
+.month-selection .form-control, .year-selection .form-control {
+    text-align: center;
+    cursor: default;
+}

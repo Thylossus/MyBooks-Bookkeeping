@@ -17,6 +17,10 @@
 package tags;
 
 import database.JSONable;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonWriter;
@@ -43,10 +47,19 @@ public class ObjectToJSON extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException {
         if (object != null) {
+            //Use temporary output stream because jw.close() (called automatically by try) closes also the
+            //underlying output stream and we do not want the jsp output stream to be closed...
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             JspWriter out = getJspContext().getOut();
             JsonObject jo = object.toJSON();
-            try (JsonWriter jw = Json.createWriter(out)) {
+            try (JsonWriter jw = Json.createWriter(baos)) {
                 jw.writeObject(jo);
+            }
+            try {
+                out.print(baos.toString());
+            } catch (IOException ex) {
+                Logger.getLogger(ObjectToJSON.class.getName()).log(Level.SEVERE, "IO exception during writing JSON string to JSP output. (" + ex + ")", ex);
+                throw new JspException("IO exception during writing JSON string to JSP output. (" + ex + ")", ex);
             }
         } else {
             throw new JspException("Provided object is null!");

@@ -57,6 +57,11 @@ public class Date {
     private int second;
     
     /**
+     * The output format.
+     */
+    private String format;
+    
+    /**
      * Construct date (now).
      */
     public Date() {
@@ -67,6 +72,7 @@ public class Date {
         this.hour = this.calendar.get(GregorianCalendar.HOUR_OF_DAY);
         this.minute = this.calendar.get(GregorianCalendar.MINUTE);
         this.second = this.calendar.get(GregorianCalendar.SECOND);
+        this.format = "yyyy-MM-dd HH:mm:ss";
     }
 
     /**
@@ -90,6 +96,21 @@ public class Date {
      */
     public void setCalendar(Timestamp timestamp) {
         this.calendar.setTimeInMillis(timestamp.getTime());
+        //Update other fields
+        this.year = this.calendar.get(GregorianCalendar.YEAR);
+        this.month = this.calendar.get(GregorianCalendar.MONTH);
+        this.day = this.calendar.get(GregorianCalendar.DAY_OF_MONTH);
+        this.hour = this.calendar.get(GregorianCalendar.HOUR_OF_DAY);
+        this.minute = this.calendar.get(GregorianCalendar.MINUTE);
+        this.second = this.calendar.get(GregorianCalendar.SECOND);
+    }
+    
+    /**
+     * Set the calendar of the date and update all other fields accordingly.
+     * @param date a date (<code>java.sql.Date</code>) object.
+     */
+    public void setCalendar(java.sql.Date date) {
+        this.calendar.setTimeInMillis(date.getTime());
         //Update other fields
         this.year = this.calendar.get(GregorianCalendar.YEAR);
         this.month = this.calendar.get(GregorianCalendar.MONTH);
@@ -154,6 +175,22 @@ public class Date {
     public int getSecond() {
         return this.second;
     }
+
+    /**
+     * Get the date's printing format.
+     * @return the date's printing format.
+     */
+    public String getFormat() {
+        return format;
+    }
+
+    /**
+     * Set the date's printing format.
+     * @param format a date format as a string.
+     */
+    public void setFormat(String format) {
+        this.format = format;
+    }
     
     /**
      * Provides a default string representation of the date.
@@ -161,7 +198,7 @@ public class Date {
      */
     @Override
     public String toString() {
-        return this.toString("yyyy-MM-dd hh:mm:ss");
+        return this.toString(this.format);
     }
     
     /**

@@ -47,6 +47,9 @@ public class Signout extends Command{
             ScopeHandler.getInstance().remove(this.request, "user", "session");
         }
         
+        //Destroy session
+        this.request.getSession().invalidate();
+        
         this.viewPath = "/MyBooks-Bookkeeping";
         this.viewFile = "/home";
         

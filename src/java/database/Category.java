@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 /**
  * Active record for categories.
  * @author Tobias Kahse <tobias.kahse@outlook.com>
- * @version 0.1
  */
 public class Category extends ActiveRecord implements DBDeletable, DBInsertable, DBUpdatable{
 

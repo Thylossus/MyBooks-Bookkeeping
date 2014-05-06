@@ -21,10 +21,11 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 /**
  * Active record for records.
@@ -32,7 +33,7 @@ import java.util.logging.Logger;
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  * @version 0.1
  */
-public class Record extends ActiveRecord implements DBDeletable, DBInsertable, DBUpdatable {
+public class Record extends ActiveRecord implements DBDeletable, DBInsertable, DBUpdatable, JSONable {
 
     //Tables
     /**
@@ -132,7 +133,8 @@ public class Record extends ActiveRecord implements DBDeletable, DBInsertable, D
             this.id = rs.getInt(Record.CLMN_ID);
             this.title = rs.getString(Record.CLMN_TITLE);
             this.description = rs.getString(Record.CLMN_DESCRIPTION);
-            this.amount = rs.getDouble(Record.CLMN_AMOUNT);
+            //Ensure that amount is rounded to 2 decimal places
+            this.amount = Math.round(rs.getDouble(Record.CLMN_AMOUNT)*100.0)/100.0;
             this.recordDate = rs.getDate(Record.CLMN_RECORD_DATE);
             this.catId = rs.getInt(Record.CLMN_CAT_ID);
             this.catName = rs.getString(Record.CLMN_CAT_NAME);
@@ -166,7 +168,7 @@ public class Record extends ActiveRecord implements DBDeletable, DBInsertable, D
                 rs.close();
             } catch (SQLException sqle) {
                 //Statement failed
-                String msg = "Failed to prepare the SQL statement.";
+                String msg = "Failed to prepare the SQL statement. (SQLE: " + sqle.getMessage() + ")";
                 Logger.getLogger(Record.class.getName()).log(Level.SEVERE, null, new DBException(msg, sqle, 2));
             }
         } catch (DBException ex) {
@@ -245,7 +247,7 @@ public class Record extends ActiveRecord implements DBDeletable, DBInsertable, D
             //Load existing records
             ArrayList<Record> existingRecords = 
                     Record.executeSelection(
-                            "SELECT ID"
+                            "SELECT *"
                             + " FROM " + Record.SELECT_TABLE
                             + " WHERE " + Record.CLMN_BALANCE_SHEET + " = " + this.balanceSheet
                             + " ORDER BY " + Record.CLMN_ID + " DESC"
@@ -264,35 +266,31 @@ public class Record extends ActiveRecord implements DBDeletable, DBInsertable, D
                     + ", " + Record.CLMN_TITLE
                     + ", " + Record.CLMN_DESCRIPTION
                     + ", " + Record.CLMN_AMOUNT
+                    + ", " + Record.CLMN_RECORD_DATE
                     + ", " + Record.CLMN_CATEGORY + ")"
                     + " VALUES "
-                    + "(?, ?, ?, ?, ?, ?)";
+                    + "(?, ?, ?, ?, ?, ?, ?)";
 
             try {
                 con = DBConnection.getInstance().getConnection();
-                try (PreparedStatement stmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                try (PreparedStatement stmt = con.prepareStatement(sql)) {
 
                     stmt.setInt(1, this.balanceSheet);
                     stmt.setInt(2, this.id);
                     stmt.setString(3, this.title);
                     stmt.setString(4, this.description);
                     stmt.setDouble(5, this.amount);
-                    stmt.setInt(6, this.catId);
+                    stmt.setDate(6, this.recordDate);
+                    stmt.setInt(7, this.catId);
 
                     if (stmt.executeUpdate() != 1) {
                         Logger.getLogger(Record.class.getName()).log(Level.WARNING, "Failed to insert new Record in DB!");
-                    } else {
-                        //Get the id of the new user
-                        ResultSet rs = stmt.getGeneratedKeys();
-                        if (rs.next()) {
-                            this.id = rs.getInt(1);
-                        }
-                    }
+                    } 
 
                 } catch (SQLException sqle) {
                     //Statement failed
                     String msg = "Failed to prepare the SQL statement.";
-                    Logger.getLogger(Record.class.getName()).log(Level.SEVERE, null, new DBException(msg, sqle, 2));
+                    Logger.getLogger(Record.class.getName()).log(Level.SEVERE, msg + "(" + sqle.getMessage() + ")", new DBException(msg, sqle, 2));
                 }
             } catch (DBException ex) {
                 //Establishing connection failed
@@ -317,7 +315,6 @@ public class Record extends ActiveRecord implements DBDeletable, DBInsertable, D
                 && this.id != 0
                 && this.title != null
                 && this.description != null
-                && this.amount >= 0.0
                 && this.recordDate != null
                 && this.catId != 0) {
             Connection con;
@@ -525,6 +522,28 @@ public class Record extends ActiveRecord implements DBDeletable, DBInsertable, D
      */
     public String getCatColour() {
         return catColour;
+    }
+
+    @Override
+    public JsonObject toJSON() {
+        beans.Date date = new beans.Date();
+        date.setCalendar(this.recordDate);
+        date.setFormat("yyyy-MM-dd");
+        
+        
+        JsonObject jo = Json.createObjectBuilder()
+                .add("balanceSheet", this.balanceSheet)
+                .add("id", this.id)
+                .add("title", this.title)
+                .add("description", this.description)
+                .add("amount", this.amount)
+                .add("date", date.toString())
+                .add("catId", this.catId)
+                .add("catName", this.catName)
+                .add("catColour", this.catColour)
+                .build();
+        
+        return jo;
     }
     
 }

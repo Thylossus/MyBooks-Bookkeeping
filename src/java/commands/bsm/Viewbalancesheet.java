@@ -18,8 +18,14 @@
 package commands.bsm;
 
 import commands.Command;
+import controller.ScopeHandler;
+import database.BalanceSheet;
+import database.User;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import model.ModelComponentFactory;
 import model.types.UserType;
 
 /**
@@ -36,7 +42,8 @@ public class Viewbalancesheet extends Command{
      */
     public Viewbalancesheet (HttpServletRequest request, HttpServletResponse response) {
         super(request, response);        
-        this.viewFile = "/home.jsp";
+        this.viewFile = "/viewbalancesheet.jsp";
+        ScopeHandler.getInstance().store(this.request, "title", "View Balance Sheet");
         this.requiredUserType = UserType.STANDARD_USER;
     }
     
@@ -46,7 +53,31 @@ public class Viewbalancesheet extends Command{
      */
     @Override
     public String execute() {    
-        
+        BalanceSheet activeBalanceSheet = (BalanceSheet) ScopeHandler.getInstance().load(this.request, "balanceSheet", "session");
+        User user = (User) ScopeHandler.getInstance().load(this.request, "user", "session");
+
+        if (activeBalanceSheet != null && user != null) {
+            try {
+                //Load records
+                ModelComponentFactory.createModuleComponent(this.request, this.response, "LoadRecordsOfAMonth")
+                        .process();
+            } catch (Exception ex) {
+                Logger.getLogger(Openbalancesheeteditor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+            //If no balance sheet is in the session, forward the user to the balance sheet overview.
+            this.viewPath = "/MyBooks-Bookkeeping";
+            this.viewFile = "/balancesheets";
+            ScopeHandler.getInstance().store(this.request, "orderby", BalanceSheet.CLMN_DATE_OF_LAST_CHANGE);
+            ScopeHandler.getInstance().store(this.request, "title", "Balance Sheet Management");
+        }
+
+        try {
+            ModelComponentFactory.createModuleComponent(this.request, this.response, "CreateMainMenu").process();
+        } catch (Exception ex) {
+            Logger.getLogger(Openbalancesheeteditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         return this.viewPath + this.viewFile;
     }

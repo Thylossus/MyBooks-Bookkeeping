@@ -17,18 +17,20 @@
         </div>
         <div class="panel-body">
             <div class="balance-sheets">
-                <sys:BalanceSheetOverview data="${requestScope.dataList}" order="${requestScope.orderby}">
-                    <li data-title="${bsTitle}">
-                        <h4>
-                            <c:out value="${bsTitle}" />
-                        </h4>
-                        <span class="glyphicon glyphicon-gbp"></span>
-                        <div class="balance-sheet-info">
-                            <span class="balance-sheet-edited">Edited: ${bsEdited}</span>
-                            <span class="balance-sheet-created">Created: ${bsCreated}</span>
-                        </div>                        
-                    </li>
-                </sys:BalanceSheetOverview>
+                <ul class="balance-sheet-list">
+                    <sys:DataListOverview data="${requestScope.dataList}" order="${requestScope.orderby}" type="BalanceSheet">
+                        <li data-title="${bsTitle}">
+                            <h4>
+                                <c:out value="${bsTitle}" />
+                            </h4>
+                            <span class="glyphicon glyphicon-gbp"></span>
+                            <div class="balance-sheet-info">
+                                <span class="balance-sheet-edited">Edited: ${bsEdited}</span>
+                                <span class="balance-sheet-created">Created: ${bsCreated}</span>
+                            </div>                        
+                        </li>
+                    </sys:DataListOverview>
+                </ul>
             </div>
         </div>
         <div class="panel-footer">
@@ -61,6 +63,9 @@
     </div>
 </div>
 
+<%@include file="jslibraries.jsp" %>
+<%-- Place JavaScript here (between inclusion of jslibraries.jsp and footer.jsp)! --%>
+
 <script type="text/javascript">
     $(document).ready(function() {
         var menuDisabled = true;
@@ -70,6 +75,7 @@
             $(this).addClass("selected");
 
             if (menuDisabled) {
+                $("li.disabled > a").unbind("click");
                 $("li.disabled").removeClass("disabled");
             }
 

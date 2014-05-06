@@ -15,4 +15,6 @@
     </div>
 </div>
 
+<%@include file="jslibraries.jsp" %>
+<%-- Place JavaScript here (between inclusion of jslibraries.jsp and footer.jsp)! --%>
 <%@include file="footer.jsp" %>

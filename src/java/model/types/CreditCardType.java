@@ -59,7 +59,7 @@ public enum CreditCardType {
      * Search for a specific credit card type by its id.
      * @param id The id of the searched credit card type.
      * @return If the given id matches the id of an credit card type, the credit card
-     * type is returned. Otherwise the <code>VISA</code> type is returned.
+     * type is returned. Otherwise the <code>null</code> is returned.
      */
     public static CreditCardType getCreditCardTypeById(int id) {
         for (CreditCardType cct : CreditCardType.values()) {
@@ -68,14 +68,14 @@ public enum CreditCardType {
             }
         }
         
-        return VISA;
+        return null;
     }
     
     /**
      * Search for a specific credit card type by its name.
      * @param name The name of the searched credit card type.
      * @return If the given name matches the name of an credit card type, 
-     * the credit card type is returned. Otherwise the <code>VISA</code> type is returned.
+     * the credit card type is returned. Otherwise the <code>null</code> is returned.
      */
     public static CreditCardType getCreditCardTypeByIdentifier(String name) {
         for (CreditCardType cct : CreditCardType.values()) {
@@ -84,7 +84,7 @@ public enum CreditCardType {
             }
         }
         
-        return VISA;
+        return null;
     }
     
 }

@@ -129,12 +129,7 @@ public class UserDetails extends Context{
             return false;
         }
         
-        //Check if both passwords match
-        if (!Arrays.equals(this.password, this.rePassword)) {
-            return false;
-        }
-        
-        return true;
+        return Arrays.equals(this.password, this.rePassword);
     }
     
 }

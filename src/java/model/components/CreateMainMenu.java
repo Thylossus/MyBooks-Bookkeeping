@@ -50,7 +50,7 @@ public class CreateMainMenu extends ModelComponent {
         super(request, response);
         CheckUserCredentials cuc = new CheckUserCredentials(this.request, this.response);
         if (cuc.validateLogIn()) {
-            this.activeUser = (User)ScopeHandler.getInstance().load(this.request, "user", "session");
+            this.activeUser = (User) ScopeHandler.getInstance().load(this.request, "user", "session");
         } else {
             this.activeUser = null;
         }
@@ -61,7 +61,7 @@ public class CreateMainMenu extends ModelComponent {
      */
     @Override
     public void process() {
-        URLProber up = (URLProber)ScopeHandler.getInstance().load(this.request, "url");
+        URLProber up = (URLProber) ScopeHandler.getInstance().load(this.request, "url");
         String baseURL = "http://" + this.request.getServerName() + ":" + this.request.getServerPort() + this.request.getContextPath();
         MainMenu mainMenu = new MainMenu("MyBooks", baseURL);
         mainMenu.setAuthenticationMenu(this.activeUser);
@@ -72,21 +72,43 @@ public class CreateMainMenu extends ModelComponent {
 
         if (this.activeUser != null) {
             Menu bsmSubmenu = new Menu();
-            
+
             bsmSubmenu.addItem("Management", mainMenu.getBaseURL() + "/bsm/balancesheets");
             bsmSubmenu.addItem("Create balance sheet", mainMenu.getBaseURL() + "/bsm/createbalancesheet#titleInput");
-            bsmSubmenu.addItem("Open in editor", mainMenu.getBaseURL() + "/bsm/openbalancesheeteditor").setDisabled();
-            bsmSubmenu.addItem("View", mainMenu.getBaseURL() + "/bsm/viewbalancesheet").setDisabled();
-            bsmSubmenu.addItem("Delete", mainMenu.getBaseURL() + "/bsm/deletebalancesheet").setDisabled();
+            bsmSubmenu.addItem("Open in editor", mainMenu.getBaseURL() + "/bsm/openbalancesheeteditor");
+            bsmSubmenu.addItem("View", mainMenu.getBaseURL() + "/bsm/viewbalancesheet");
+            bsmSubmenu.addItem("Basic reports", mainMenu.getBaseURL() + "/bsm/basicreports");
+
+            if (this.activeUser.getUserType().getId() >= UserType.PREMIUM_USER.getId()) {
+                bsmSubmenu.addItem("Extended reports", mainMenu.getBaseURL() + "/bsm/extendedreports");
+            }
             
+            bsmSubmenu.addItem("Delete", mainMenu.getBaseURL() + "/bsm/deletebalancesheet");
+
+            //Disable menu items if no balance sheet is in the session
+            if (ScopeHandler.getInstance().load(this.request, "balanceSheet", "session") == null) {
+                bsmSubmenu.getMenuItems().get(2).setDisabled();
+                bsmSubmenu.getMenuItems().get(3).setDisabled();
+                bsmSubmenu.getMenuItems().get(4).setDisabled();
+                bsmSubmenu.getMenuItems().get(5).setDisabled();
+                if (this.activeUser.getUserType().getId() >= UserType.PREMIUM_USER.getId()) {
+                    bsmSubmenu.getMenuItems().get(6).setDisabled();
+                }
+            }
+
+            
+
             mainMenu.addItem("Balance Sheets", bsmSubmenu.getMenuItems());
             if (this.activeUser.getUserType().getId() >= UserType.NEWS_WRITER.getId()) {
                 Menu articleSubmenu = new Menu();
-                
+                articleSubmenu.addItem("Article Management", mainMenu.getBaseURL() + "/blog/articles");
+                articleSubmenu.addItem("Write Article", mainMenu.getBaseURL() + "/blog/writearticle");
+
                 mainMenu.addItem("Articles", articleSubmenu.getMenuItems());
                 if (this.activeUser.getUserType() == UserType.ADMINISTRATOR) {
                     Menu sysmgmtSubmenu = new Menu();
-                    
+                    sysmgmtSubmenu.addItem("Delete Users", mainMenu.getBaseURL() + "/sysmgmt/deleteusers");
+
                     mainMenu.addItem("System Management", sysmgmtSubmenu.getMenuItems());
                 }
             }
@@ -96,7 +118,7 @@ public class CreateMainMenu extends ModelComponent {
             //Not sufficient!
             mainMenu.setActiveItem(up.getCommand());
         }
-        
+
         ScopeHandler.getInstance().store(request, "mainMenu", mainMenu);
     }
 

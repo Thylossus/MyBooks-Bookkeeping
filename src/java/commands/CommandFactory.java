@@ -44,8 +44,7 @@ public abstract class CommandFactory {
      * @param response The request's response object.
      * @return A command that can be executed.
      */
-    public static Command createCommand(HttpServletRequest request,
-            HttpServletResponse response) {
+    public static Command createCommand(HttpServletRequest request, HttpServletResponse response) {
         //Initialise class loader
         ClassLoader classLoader = CommandFactory.class.getClassLoader();
 
@@ -103,8 +102,13 @@ public abstract class CommandFactory {
                         }
 
                         viewPath = "/json";
+                    } else {
+                        //Synchronous request
+                        if (!command.hasHtmlOutput()) {
+                            command = new Error(request, response);
+                            ((Error) command).setErrno(2);
+                        }
                     }
-                    //else: Synchronous request
                 }
             } else {
                 //Access denied

@@ -39,6 +39,11 @@ public enum InputType {
     MAIL,
 
     /**
+     * Input is a credit card number.
+     */
+    CREDIT_CARD_NUMBER,
+    
+    /**
      * Input is an integer number.
      */
     INTEGER,

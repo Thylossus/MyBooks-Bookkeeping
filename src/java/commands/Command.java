@@ -41,6 +41,10 @@ public abstract class Command {
     protected HttpServletResponse response;
 
     /**
+     * Flag to specify the command is available for html requests.
+     */
+    protected boolean htmlOutput;
+    /**
      * Flag to specify whether the command is available for the client or not,
      * i.e. whether it has an XML view or not
      */
@@ -76,6 +80,8 @@ public abstract class Command {
      * @param response The outgoing HTTP response.
      */
     public Command(HttpServletRequest request, HttpServletResponse response) {
+        //By default commands have a HTML output
+        this.htmlOutput = true;
         //By default commands are not available for XML output
         this.xmlOutput = false;
         //By detault commands are not available for JSON output
@@ -100,6 +106,16 @@ public abstract class Command {
      */
     public abstract String execute() throws ServletException, IOException;
 
+    /**
+     * Checks whether the command has an HTML output.
+     *
+     * @return Returns true, if the command has an HTML output/view. Otherwise
+     * false is returned.
+     */
+    public boolean hasHtmlOutput() {
+        return this.htmlOutput;
+    }
+    
     /**
      * Checks whether the command has an XML Output respectively whether it is
      * available for the Java client.
@@ -143,12 +159,7 @@ public abstract class Command {
             //Check login
             if (cuc.validateLogIn()) {
                 User user = (User)ScopeHandler.getInstance().load(this.request, "user", "session");
-                //Check access rights
-                if (user.getUserType().getId() >= this.requiredUserType.getId()) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return user.getUserType().getId() >= this.requiredUserType.getId();
             } else {
                 return false;
             }

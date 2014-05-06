@@ -14,9 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package model.components.auth;
-
 
 import controller.ScopeHandler;
 import database.DBFilter;
@@ -31,10 +29,11 @@ import model.ModelComponent;
 
 /**
  * Check credentials that were entered by the user.
+ *
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
-public class CheckUserCredentials extends ModelComponent{
-    
+public class CheckUserCredentials extends ModelComponent {
+
     /**
      * The entered e-mail address.
      */
@@ -43,10 +42,10 @@ public class CheckUserCredentials extends ModelComponent{
      * The SHA-256 hash value of the inserted password.
      */
     private byte[] password;
-    
-    
+
     /**
      * Construct a CheckUserCredentials object
+     *
      * @param request The request's request object
      * @param response The request's response object
      */
@@ -68,7 +67,7 @@ public class CheckUserCredentials extends ModelComponent{
             DBFilter mailFilter = new DBFilter();
             mailFilter.addConstraint(User.CLMN_MAIL, SQLConstraintOperator.LIKE, this.mail);
             ArrayList<User> users = User.findAll(mailFilter);
-            
+
             //We expect to find exactly one user. If we find more or less than one user, the verification failed.
             if (users != null && users.size() == 1) {
                 User user = users.get(0);
@@ -78,49 +77,56 @@ public class CheckUserCredentials extends ModelComponent{
                     ScopeHandler.getInstance().store(this.request, "user", user);
                 } else {
                     ScopeHandler.getInstance().store(this.request, "inputValidation", false);
+                    //Probably there is a user in the session. Remove him!
+                    ScopeHandler.getInstance().remove(this.request, "user", "session");
                 }
             } else {
                 ScopeHandler.getInstance().store(this.request, "inputValidation", false);
+                //Probably there is a user in the session. Remove him!
+                ScopeHandler.getInstance().remove(this.request, "user", "session");
             }
         }
     }
 
     /**
      * Provide parameters to the model component.
+     *
      * @param params an hash map of parameters.
-     * @return the module component. The return value can be used for concatenation.
+     * @return the module component. The return value can be used for
+     * concatenation.
      */
     @Override
     public ModelComponent provideParameters(HashMap<String, Object> params) {
         if (params.get("mail") != null) {
-            this.mail = (String)params.get("mail");
+            this.mail = (String) params.get("mail");
         }
-        
+
         if (params.get("password") != null) {
-            this.password = (byte[])params.get("password");
+            this.password = (byte[]) params.get("password");
         }
-        
+
         return this;
     }
-    
+
     /**
      * Validate a signed in user.
+     *
      * @return true if the user is logged in and false if not.
      */
     public boolean validateLogIn() {
         //Load user from session. If the user is not in the session, no user is logged in.
-        User user = (User)ScopeHandler.getInstance().load(this.request, "user", "session");
-        
+        User user = (User) ScopeHandler.getInstance().load(this.request, "user", "session");
+
         if (user == null) {
             return false;
-        }        
-        
+        }
+
         this.mail = user.getMail();
         this.password = user.getPassword();
-        
+
         //Check user credentials
         this.process();
-        
+
         return (boolean) ScopeHandler.getInstance().load(this.request, "inputValidation");
     }
 

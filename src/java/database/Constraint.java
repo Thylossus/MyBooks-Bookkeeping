@@ -18,6 +18,8 @@ package database;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class for constraints that can be added to the DBFilter.
@@ -69,6 +71,8 @@ public class Constraint {
 
         if (this.evaluateAttribute() && this.evaluateValue()) {
             String constraint = this.operator.getStartTag();
+            String subconstraintA;
+            String subconstraintB;
 
             switch (this.operator) {
                 case AND:
@@ -79,9 +83,17 @@ public class Constraint {
                     if (((ArrayList) this.value).size() != 2) {
                         return "";
                     }
-                    constraint += ((ArrayList) this.value).get(0);
+                    
+                    subconstraintA = ((ArrayList) this.value).get(0).toString();
+                    subconstraintB = ((ArrayList) this.value).get(1).toString();
+                    
+                    if (subconstraintA.isEmpty() || subconstraintB.isEmpty()) {
+                        return "";
+                    }
+                    
+                    constraint += subconstraintA;
                     constraint += this.operator.getOperator();
-                    constraint += ((ArrayList) this.value).get(1);
+                    constraint += subconstraintB;
                     break;
                 case BETWEEN:
                     //We have already checked the type of the value but we also
@@ -91,11 +103,29 @@ public class Constraint {
                     if (((ArrayList) this.value).size() != 2) {
                         return "";
                     }
+                    
+                    subconstraintA = ((ArrayList) this.value).get(0).toString();
+                    subconstraintB = ((ArrayList) this.value).get(1).toString();
+                    
+                    if (subconstraintA.isEmpty() || subconstraintB.isEmpty()) {
+                        return "";
+                    }
+                    
+                    //Check if subconstraints are dates
+                    Pattern datePattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}");
+                    Matcher matcherA = datePattern.matcher(subconstraintA);
+                    Matcher matcherB = datePattern.matcher(subconstraintB);
+                    if(matcherA.matches() && matcherB.matches()) {
+                        subconstraintA = "Date('" + subconstraintA + "')";
+                        subconstraintB = "Date('" + subconstraintB + "')";
+                    }
+                    
+                    
                     constraint += this.attribute;
                     constraint += this.operator.getOperator();
-                    constraint += ((ArrayList) this.value).get(0);
+                    constraint += subconstraintA;
                     constraint += " AND ";
-                    constraint += ((ArrayList) this.value).get(1);
+                    constraint += subconstraintB;
                     break;
                 case IN:
                     //We have already checked the type of the value but we also
@@ -126,9 +156,17 @@ public class Constraint {
                     if (((ArrayList) this.value).size() != 2) {
                         return "";
                     }
-                    constraint += ((ArrayList) this.value).get(0);
+                    
+                    subconstraintA = ((ArrayList) this.value).get(0).toString();
+                    subconstraintB = ((ArrayList) this.value).get(1).toString();
+                    
+                    if (subconstraintA.isEmpty() || subconstraintB.isEmpty()) {
+                        return "";
+                    }
+                    
+                    constraint += subconstraintA;
                     constraint += this.operator.getOperator();
-                    constraint += ((ArrayList) this.value).get(1);
+                    constraint += subconstraintB;
                     break;
                 default:
                     constraint = this.attribute
@@ -171,7 +209,10 @@ public class Constraint {
         } else if (expectedValue[0].equals(Number.class)) {
             if (this.value.getClass().equals(int.class)
                     || this.value.getClass().equals(double.class)
-                    || this.value.getClass().equals(float.class)) {
+                    || this.value.getClass().equals(float.class)
+                    //Check if this.value is boolean
+                    || (boolean)this.value == true
+                    || (boolean)this.value == false) {
                 return true;
             } else {
                 return false;

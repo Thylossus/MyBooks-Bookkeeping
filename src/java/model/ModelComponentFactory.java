@@ -22,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import model.components.*;
 import model.components.auth.*;
 import model.components.bsm.*;
+import model.components.editor.category.*;
+import model.components.editor.record.*;
+import model.components.sysmgmt.*;
+import model.components.user.*;
 
 /**
  * Construct specific model components by a string identifier.
@@ -60,6 +64,38 @@ public abstract class ModelComponentFactory {
                 return new CloseBalanceSheet(request, response);
             case "DeleteBalanceSheet":
                 return new DeleteBalanceSheet(request, response);
+            case "CreateCategory":
+                return new CreateCategory(request, response);
+            case "DeleteCategory":
+                return new DeleteCategory(request, response);
+            case "LoadCategory":
+                return new LoadCategory(request, response);
+            case "UpdateCategory":
+                return new UpdateCategory(request, response);
+            case "ChangeRecords":
+                return new ChangeRecords(request, response);
+            case "CreateRecords":
+                return new CreateRecords(request, response);
+            case "DeleteRecords":
+                return new DeleteRecords(request, response);
+            case "GetCategoryRecords":
+                return new GetCategoryRecords(request, response);
+            case "LoadRecord":
+                return new LoadRecord(request, response);
+            case "LoadRecordsOfAMonth":
+                return new LoadRecordsOfAMonth(request, response);
+            case "DeleteUser":
+                return new DeleteUser(request, response);
+            case "GenerateSystemStatistics":
+                return new GenerateSystemStatistics(request, response);
+            case "AddPremiumMembership":
+                return new AddPremiumMembership(request, response);
+            case "CheckPremiumMembership":
+                return new CheckPremiumMembership(request, response);
+            case "StorePaymentDetails":
+                return new StorePaymentDetails(request, response);
+            case "UpdateUser":
+                return new UpdateUser(request, response);
             default:
                 throw new Exception("Invalid identifier for a model component!");
         }

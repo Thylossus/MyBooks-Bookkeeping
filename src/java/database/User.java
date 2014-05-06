@@ -152,7 +152,7 @@ public class User extends ActiveRecord implements DBDeletable, DBInsertable, DBU
             } catch (SQLException sqle) {
                 //Statement failed
                 String msg = "Failed to prepare the SQL statement.";
-                Logger.getLogger(User.class.getName()).log(Level.SEVERE, null, new DBException(msg, sqle, 2));
+                Logger.getLogger(User.class.getName()).log(Level.SEVERE, msg + " (" + sqle.getMessage() + ")", new DBException(msg, sqle, 2));
             }
         } catch (DBException ex) {
             //Establishing connection failed

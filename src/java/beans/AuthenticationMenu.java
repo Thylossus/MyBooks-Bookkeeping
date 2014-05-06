@@ -52,14 +52,17 @@ public class AuthenticationMenu {
         MenuItem[] menuItems = new MenuItem[2];
         if (this.activeUser != null) {
             MenuItem user = new MenuItem();
+            Date lastSignInDate = new Date();
+            lastSignInDate.setCalendar(this.activeUser.getLastSignInDate());
+            
             user.setLabel(this.activeUser.getFirstname() 
                     + " " + this.activeUser.getLastname()
-                    + " (" + this.activeUser.getLastSignInDate().toString() + ")");
-            user.setLink("#");
+                    + " (" + lastSignInDate.toString() + ")");
+            user.setLink(this.baseURL + "/user/viewprofile");
             user.setGlyphicon("glyphicon-user");
             MenuItem signout = new MenuItem();
             signout.setLabel("Sign out");
-            signout.setLink(baseURL + "/auth/signout");
+            signout.setLink(this.baseURL + "/auth/signout");
             signout.setGlyphicon("glyphicon-log-out");
             
             menuItems[0] = user;

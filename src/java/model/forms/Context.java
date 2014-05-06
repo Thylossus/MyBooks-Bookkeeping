@@ -44,7 +44,7 @@ public abstract class Context {
     protected Object searchInputValue(String key) {
         for (Input i : this.inputList) {
             if (i.getKey().equals(key)) {
-                return i;
+                return i.getValue();
             }
         }
         

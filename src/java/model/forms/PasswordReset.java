@@ -18,6 +18,7 @@
 package model.forms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import model.components.Input;
 
 /**
@@ -26,12 +27,25 @@ import model.components.Input;
  */
 public class PasswordReset extends Context{
 
+    
+    /**
+     * User's password.
+     */
+    private byte[] password;
+    /**
+     * User's re-entered password.
+     */
+    private byte[] rePassword;
+    
     /**
      * Construct the password reset context.
      * @param inputList 
      */
     public PasswordReset(ArrayList<Input> inputList) {
         this.inputList = inputList;
+        
+        this.password = null;
+        this.rePassword = null;
     }
     
     /**
@@ -40,7 +54,38 @@ public class PasswordReset extends Context{
      */
     @Override
     public boolean validate() {
-        return false;
+        //Check required parameters
+        
+        //Check password
+        if (inputList.get(0).getKey().equals("password")) {
+            this.password = (byte[])inputList.get(0).getValue();
+        } else {
+            this.password = (byte[])this.searchInputValue("password");
+            if (this.password == null) {
+                return false;
+            }
+        }
+        //Check re-password
+        if (inputList.get(1).getKey().equals("re-password")) {
+            this.rePassword = (byte[])inputList.get(1).getValue();
+        } else {
+            this.rePassword = (byte[])this.searchInputValue("re-password");
+            if (this.rePassword == null) {
+                return false;
+            }
+        }
+        
+        //Check length of password hashes
+        if (this.password.length != 32 || this.rePassword.length != 32) {
+            return false;
+        }
+        
+        //Check if both passwords match
+        if (!Arrays.equals(this.password, this.rePassword)) {
+            return false;
+        }
+        
+        return true;
     }
     
 }

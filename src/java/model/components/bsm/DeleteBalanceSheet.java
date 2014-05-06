@@ -21,9 +21,12 @@ package model.components.bsm;
 import controller.ScopeHandler;
 import database.BalanceSheet;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.ModelComponent;
+import model.ModelComponentFactory;
 
 /**
  * Deletes a selected balance sheet and all related records and series.
@@ -52,7 +55,20 @@ public class DeleteBalanceSheet extends ModelComponent{
     @Override
     public void process() {
         if (this.balanceSheet != null) {
-            this.balanceSheet.delete();
+            //Delete records
+            HashMap<String,Object> deleteRecordsParams = new HashMap<>();
+            deleteRecordsParams.put("bsId", this.balanceSheet.getId());
+            try {
+                ModelComponentFactory.createModuleComponent(this.request, this.response, "DeleteRecords")
+                        .provideParameters(deleteRecordsParams)
+                        .process();
+            } catch (Exception ex) {
+                Logger.getLogger(DeleteBalanceSheet.class.getName()).log(Level.SEVERE, "Could not delete balance sheet records. (" + ex.getMessage() + ")", ex);
+            }
+            //Delete balance sheet
+            if(this.balanceSheet.delete()) {
+                ScopeHandler.getInstance().remove(this.request, "balanceSheet", "session");
+            }
         }
     }
 

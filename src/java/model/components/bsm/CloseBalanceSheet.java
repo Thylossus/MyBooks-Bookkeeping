@@ -19,6 +19,9 @@ package model.components.bsm;
 
 
 import controller.ScopeHandler;
+import database.BalanceSheet;
+import java.sql.Timestamp;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +47,10 @@ public class CloseBalanceSheet extends ModelComponent{
      */
     @Override
     public void process() {
-        if (ScopeHandler.getInstance().load(this.request, "balanceSheet", "session") != null) {
+        BalanceSheet balanceSheet = (BalanceSheet)ScopeHandler.getInstance().load(this.request, "balanceSheet", "session");
+        if (balanceSheet != null) {
+            balanceSheet.setDateOfLastChange(new Timestamp(new GregorianCalendar().getTimeInMillis()));
+            balanceSheet.update();
             ScopeHandler.getInstance().remove(this.request, "balanceSheet", "session");
         }
     }

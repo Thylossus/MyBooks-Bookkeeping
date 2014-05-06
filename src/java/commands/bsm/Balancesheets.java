@@ -65,18 +65,18 @@ public class Balancesheets extends Command{
         
         String orderBy = (String)ScopeHandler.getInstance().load(this.request, "orderby");
         if (orderBy == null || orderBy.isEmpty()) {
-            orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE;
+            orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE + " DESC";
         } else {
             //Validate the entered orderBy statements to prevent SQL injections
             //and ensure that the upper case version of the column name is used.
-            if (orderBy.equalsIgnoreCase(BalanceSheet.CLMN_DATE_OF_CREATION)) {
-                orderBy = BalanceSheet.CLMN_DATE_OF_CREATION;
-            } else if (orderBy.equalsIgnoreCase(BalanceSheet.CLMN_DATE_OF_LAST_CHANGE)) {
-                orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE;
+            if (orderBy.equalsIgnoreCase(BalanceSheet.CLMN_DATE_OF_CREATION + " DESC") || orderBy.equalsIgnoreCase(BalanceSheet.CLMN_DATE_OF_CREATION)) {
+                orderBy = BalanceSheet.CLMN_DATE_OF_CREATION + " DESC";
+            } else if (orderBy.equalsIgnoreCase(BalanceSheet.CLMN_DATE_OF_LAST_CHANGE + " DESC") || orderBy.equalsIgnoreCase(BalanceSheet.CLMN_DATE_OF_LAST_CHANGE)) {
+                orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE + " DESC";
             } else if (orderBy.equalsIgnoreCase(BalanceSheet.CLMN_TITLE)) {
                 orderBy = BalanceSheet.CLMN_TITLE;
             } else {
-                orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE;
+                orderBy = BalanceSheet.CLMN_DATE_OF_LAST_CHANGE + " DESC";
             }
         }
         //Update value in request scope after validation
@@ -85,6 +85,7 @@ public class Balancesheets extends Command{
         //User should be available because the command factory already checked the login and this command cannot be called if no one is logged in.
         if (user != null) {
             
+            //Only load balance sheets if this command is called from the custom tag (dispatch = false in this case).
             if (!dispatch) {
                 DBFilter filter = new DBFilter();
                 filter.addConstraint(BalanceSheet.CLMN_OWNER, SQLConstraintOperator.EQUAL, user.getId());

@@ -82,6 +82,9 @@ public class Signin extends Command{
                                 //... and store the user in the session scope
                                 ScopeHandler.getInstance().store(request, "user", user, "session");
                                 
+                                //Check premium membership
+                                ModelComponentFactory.createModuleComponent(this.request, this.response, "CheckPremiumMembership").process();
+                                
                                 //Redirect to the corresponding view.
                                 this.viewPath = "/MyBooks-Bookkeeping";
                                 String title;        
