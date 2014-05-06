@@ -16,27 +16,32 @@ import model.types.InputType;
 
 /**
  * Sign in command
+ *
  * @author Tobias
  */
-public class Signin extends Command{
+public class Signin extends Command {
+
     /**
      * Constructs a sign in command using a request and a response object.
+     *
      * @param request The request object of the request.
      * @param response The response object of the request.
      */
-    public Signin (HttpServletRequest request, HttpServletResponse response) {
-        super(request, response);        
+    public Signin(HttpServletRequest request, HttpServletResponse response) {
+        super(request, response);
         ScopeHandler.getInstance().store(request, "title", "Sign in");
         this.viewFile = "/signin.jsp";
+        this.xmlOutput = true;
     }
-    
+
     /**
      * Executes the command and returns the location of the view.
+     *
      * @return The relative location of the view's JSP file.
      */
     @Override
-    public String execute() {    
-        
+    public String execute() {
+
         //Check whether the form was submitted or not.
         if (ScopeHandler.getInstance().load(this.request, "submit", "parameter") != null) {
             Input mail = new Input("mail", InputType.MAIL, ScopeHandler.getInstance().load(this.request, "mail", "parameter"));
@@ -57,7 +62,7 @@ public class Signin extends Command{
                         .process();
 
                 if ((boolean) ScopeHandler.getInstance().load(this.request, "inputValidation")) {
-                //Semantic validation successful
+                    //Semantic validation successful
                     //Start semantic input validation
                     ModelComponentFactory.createModuleComponent(this.request, this.response, "SemanticInputValidation")
                             .provideParameters(validationParameters)
@@ -72,46 +77,52 @@ public class Signin extends Command{
                         ModelComponentFactory.createModuleComponent(this.request, this.response, "CheckUserCredentials")
                                 .provideParameters(credentialCheckParameters)
                                 .process();
-                        
+
                         if ((boolean) ScopeHandler.getInstance().load(this.request, "inputValidation")) {
                             //User credentials correct
-                            User user = (User)ScopeHandler.getInstance().load(request, "user");
+                            User user = (User) ScopeHandler.getInstance().load(request, "user");
                             if (user != null) {
                                 //Remove user from request scope...
                                 ScopeHandler.getInstance().remove(request, "user");
                                 //... and store the user in the session scope
                                 ScopeHandler.getInstance().store(request, "user", user, "session");
-                                
+
                                 //Check premium membership
                                 ModelComponentFactory.createModuleComponent(this.request, this.response, "CheckPremiumMembership").process();
-                                
-                                //Redirect to the corresponding view.
-                                this.viewPath = "/MyBooks-Bookkeeping";
-                                String title;        
-                                
-                                switch(user.getUserType()) {
-                                    case ADMINISTRATOR:
-                                        this.viewFile = "/sysmgmt/statistics";
-                                        title = "System Statistics";
-                                        break;
-                                    case NEWS_WRITER:
-                                        this.viewFile = "/blog/articles";
-                                        title = "Articles";
-                                        break;
-                                    case PREMIUM_USER:
-                                        this.viewFile = "/bsm/balancesheets";
-                                        title = "Balance Sheets";
-                                        break;
-                                    case STANDARD_USER:
-                                        this.viewFile = "/bsm/balancesheets";
-                                        title = "Balance Sheets";
-                                        break;
-                                    default:
-                                        this.viewFile = "/home";
-                                        title = "Home";
+
+                                if (this.viewPath.equals("/xml")) {
+                                    this.viewFile = "/user.jsp";
+                                } else {
+                                    //Redirect to the corresponding view.
+                                    this.viewPath = "/MyBooks-Bookkeeping";
+                                    String title;
+
+                                    switch (user.getUserType()) {
+                                        case ADMINISTRATOR:
+                                            this.viewFile = "/sysmgmt/deleteusers";
+                                            title = "System Statistics";
+                                            break;
+                                        case NEWS_WRITER:
+                                            this.viewFile = "/blog/articles";
+                                            title = "Articles";
+                                            break;
+                                        case PREMIUM_USER:
+                                            this.viewFile = "/bsm/balancesheets";
+                                            title = "Balance Sheets";
+                                            break;
+                                        case STANDARD_USER:
+                                            this.viewFile = "/bsm/balancesheets";
+                                            title = "Balance Sheets";
+                                            break;
+                                        default:
+                                            this.viewFile = "/home";
+                                            title = "Home";
+                                    }
+                                    
+                                    ScopeHandler.getInstance().store(request, "title", title);
                                 }
+
                                 
-                                ScopeHandler.getInstance().store(request, "title", title);
                             } else {
                                 //User could not be loaded
                                 Logger.getLogger(Signup.class.getName()).log(Level.WARNING, "Could not load user from request scope!");
@@ -120,7 +131,7 @@ public class Signin extends Command{
                             //User credentials incorrect
                             Logger.getLogger(Signup.class.getName()).log(Level.WARNING, "Checking user credentials failed!");
                         }
-                        
+
                     } else {
                         //Semantic validation failed
                         Logger.getLogger(Signup.class.getName()).log(Level.WARNING, "Semantic validation failed!");
@@ -135,8 +146,8 @@ public class Signin extends Command{
                 //An error occured during the login process.
                 Logger.getLogger(Signup.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } 
-        
+        }
+
         try {
             ModelComponentFactory.createModuleComponent(this.request, this.response, "CreateMainMenu").process();
         } catch (Exception ex) {
@@ -145,5 +156,5 @@ public class Signin extends Command{
 
         return this.viewPath + this.viewFile;
     }
-    
+
 }

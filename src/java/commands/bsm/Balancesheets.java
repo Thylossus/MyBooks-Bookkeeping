@@ -48,6 +48,7 @@ public class Balancesheets extends Command{
         super(request, response);     
         this.requiredUserType = UserType.STANDARD_USER;
         this.viewFile = "/balancesheets.jsp";
+        this.xmlOutput = true;
         ScopeHandler.getInstance().store(request, "title", "Balance Sheet Management");
     }
     
@@ -106,9 +107,13 @@ public class Balancesheets extends Command{
             }
             
         } else {
-            this.viewPath = "/MyBooks-Bookkeeping";
-            this.viewFile = "/home";
-            ScopeHandler.getInstance().store(request, "title", "Home");
+            if (this.viewPath.equals("/xml")) {
+                this.viewFile = "/error.jsp";
+            } else {
+                this.viewPath = "/MyBooks-Bookkeeping";
+                this.viewFile = "/home";
+                ScopeHandler.getInstance().store(request, "title", "Home");
+            }
         }
         
         try {

@@ -21,6 +21,7 @@ import controller.Controller;
 import controller.ScopeHandler;
 import controller.URLProber;
 import database.ActiveRecord;
+import database.Article;
 import database.BalanceSheet;
 import database.Category;
 import database.User;
@@ -37,7 +38,8 @@ import database.Record;
 
 /**
  * Parses a list of active records and provides variables to the page context
- * that can be used to print the body. Does not provide the container for the generated elements!
+ * that can be used to print the body. Does not provide the container for the
+ * generated elements!
  *
  * @author Tobias Kahse <tobias.kahse@outlook.com>
  */
@@ -92,9 +94,8 @@ public class DataListOverview extends BodyTagSupport {
             }
 
         }
-        
-        if (data.isEmpty())
-        {
+
+        if (data.isEmpty()) {
             return SKIP_BODY;
         }
 
@@ -177,7 +178,9 @@ public class DataListOverview extends BodyTagSupport {
         } else if (data instanceof Category) {
             this.provideValuesToPageContext((Category) data);
         } else if (data instanceof User) {
-            this.provideValuesToPageContext((User)data);
+            this.provideValuesToPageContext((User) data);
+        } else if (data instanceof Article) {
+            this.provideValuesToPageContext((Article) data);
         } else {
             throw new JspException("Type of active record is not supported!");
         }
@@ -199,6 +202,7 @@ public class DataListOverview extends BodyTagSupport {
         String edited = editedDate.toString();
         String created = createdDate.toString();
 
+        this.pageContext.setAttribute("bsId", data.getId());
         this.pageContext.setAttribute("bsTitle", title);
         this.pageContext.setAttribute("bsEdited", edited);
         this.pageContext.setAttribute("bsCreated", created);
@@ -234,7 +238,7 @@ public class DataListOverview extends BodyTagSupport {
         this.pageContext.setAttribute("rCatName", catName);
         this.pageContext.setAttribute("rCatColour", catColour);
     }
-    
+
     /**
      * Provide the parameters required by the body to the page context.
      *
@@ -244,17 +248,18 @@ public class DataListOverview extends BodyTagSupport {
         int cId = data.getId();
         String cName = data.getName();
         String cColour = data.getColour();
-        
+
         this.pageContext.setAttribute("cId", cId);
         this.pageContext.setAttribute("cName", cName);
         this.pageContext.setAttribute("cColour", cColour);
     }
-    
+
     /**
      * Provide the parameters required by the body to the page context.
+     *
      * @param data a user object.
      */
-    private void provideValuesToPageContext (User data) {
+    private void provideValuesToPageContext(User data) {
         int uId = data.getId();
         String firstname = data.getFirstname();
         String lastname = data.getLastname();
@@ -266,7 +271,7 @@ public class DataListOverview extends BodyTagSupport {
         String stringLastSignInDate = dateLastSignInDate.toString();
         String stringSignUpDate = dateSignUpDate.toString("yyyy-MM-dd");
         String userType = data.getUserType().getIdentifier();
-        
+
         this.pageContext.setAttribute("id", uId);
         this.pageContext.setAttribute("firstname", firstname);
         this.pageContext.setAttribute("lastname", lastname);
@@ -274,6 +279,32 @@ public class DataListOverview extends BodyTagSupport {
         this.pageContext.setAttribute("lastSignInDate", stringLastSignInDate);
         this.pageContext.setAttribute("signUpDate", stringSignUpDate);
         this.pageContext.setAttribute("userType", userType);
+    }
+
+    /**
+     * Provide the parameters required by the body to the page context.
+     *
+     * @param data an article object.
+     */
+    private void provideValuesToPageContext(Article data) {
+        Date date = new Date();
+        date.setCalendar(data.getDate());
+
+        this.pageContext.setAttribute("title", data.getTitle());
+        this.pageContext.setAttribute("date", date);
+        this.pageContext.setAttribute("author", data.getAuthorName() + "(" + data.getAuthorMail() + ")");
+        this.pageContext.setAttribute("content", data.getContent());
+        if (data.getEditorId() != 0) {
+            this.pageContext.setAttribute("editor", data.getEditorName() + "(" + data.getEditorMail() + ")");
+
+            Date editDate = new Date();
+            editDate.setCalendar(data.getEditDate());
+
+            this.pageContext.setAttribute("editDate", editDate);
+        } else {
+            this.pageContext.setAttribute("editor", null);
+            this.pageContext.setAttribute("editDate", null);
+        }
     }
 
 }

@@ -13,6 +13,25 @@
             MyBooks - Bookkeeping
         </h1>
     </div>
+    <sys:DataListOverview data="${articles}" type="Article">
+        <div class="container">
+            <h2>
+                <c:out value="${title}" />
+                <small>
+                    <c:out value="${date}" />
+                </small>
+            </h2>
+            <p>
+                <c:out value="${content}" />
+            </p>
+            <p>
+                Written by <c:out value="${author}" />. 
+                <c:if test="${editor ne null}">
+                    Last edited by <c:out value="${editor}" /> on <c:out value="${editDate}" />.
+                </c:if>
+            </p>
+        </div>
+    </sys:DataListOverview>
 </div>
 
 <%@include file="jslibraries.jsp" %>

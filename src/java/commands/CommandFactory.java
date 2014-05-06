@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -87,6 +88,10 @@ public abstract class CommandFactory {
                         command = new Error(request, response);
                         ((Error) command).setErrno(2);
                     }
+                    
+                    Logger.getLogger(CommandFactory.class.getName()).log(Level.INFO, request.getHeader("Cookie"));
+                    
+                    response.addCookie(new Cookie("JSESSIONID", request.getSession().getId()));
 
                     viewPath = "/xml";
 

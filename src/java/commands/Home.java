@@ -18,6 +18,7 @@
 package commands;
 
 import controller.ScopeHandler;
+import database.Article;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +49,9 @@ public class Home extends Command{
      */
     @Override
     public String execute() {    
-        //dummy code
+        
+        ScopeHandler.getInstance().store(this.request, "articles", Article.findAll(new String[]{Article.CLMN_ARTICLE_DATE + " DESC"}));
+        
         try {
             ModelComponentFactory.createModuleComponent(this.request, this.response, "CreateMainMenu").process();
         } catch (Exception ex) {

@@ -64,16 +64,16 @@ public class Article extends ActiveRecord implements DBDeletable, DBInsertable, 
      */
     private static final String SELECT_ALL = 
             "SELECT "
-            + " U1." + User.CLMN_ID + "AS " + Article.CLMN_AUTHOR
-            + " U1." + User.CLMN_MAIL + "AS " + Article.CLMN_AUTHOR_MAIL
-            + " U1." + User.CLMN_FIRSTNAME + " || ' ' || U1." + User.CLMN_LASTNAME + "AS " + Article.CLMN_AUTHOR_NAME
-            + " U2." + User.CLMN_ID + "AS " + Article.CLMN_AUTHOR
-            + " U2." + User.CLMN_MAIL + "AS " + Article.CLMN_AUTHOR_MAIL
-            + " U2." + User.CLMN_FIRSTNAME + " || ' ' || U2." + User.CLMN_LASTNAME + "AS " + Article.CLMN_EDITOR_NAME
-            + " " + Article.SELECT_TABLE + "." + Article.CLMN_ID + " AS " + Article.CLMN_ID
-            + " " + Article.SELECT_TABLE + "." + Article.CLMN_TITLE + " AS " + Article.CLMN_TITLE
-            + " " + Article.SELECT_TABLE + "." + Article.CLMN_CONTENT + " AS " + Article.CLMN_CONTENT
-            + " " + Article.SELECT_TABLE + "." + Article.CLMN_ARTICLE_DATE + " AS " + Article.CLMN_ARTICLE_DATE
+            + " U1." + User.CLMN_ID + " AS " + Article.CLMN_AUTHOR + ","
+            + " U1." + User.CLMN_MAIL + " AS " + Article.CLMN_AUTHOR_MAIL + ","
+            + " U1." + User.CLMN_FIRSTNAME + " || ' ' || U1." + User.CLMN_LASTNAME + " AS " + Article.CLMN_AUTHOR_NAME + ","
+            + " U2." + User.CLMN_ID + " AS " + Article.CLMN_EDITOR + ","
+            + " U2." + User.CLMN_MAIL + " AS " + Article.CLMN_EDITOR_MAIL + ","
+            + " U2." + User.CLMN_FIRSTNAME + " || ' ' || U2." + User.CLMN_LASTNAME + " AS " + Article.CLMN_EDITOR_NAME + ","
+            + " " + Article.SELECT_TABLE + "." + Article.CLMN_ID + " AS " + Article.CLMN_ID + ","
+            + " " + Article.SELECT_TABLE + "." + Article.CLMN_TITLE + " AS " + Article.CLMN_TITLE + ","
+            + " " + Article.SELECT_TABLE + "." + Article.CLMN_CONTENT + " AS " + Article.CLMN_CONTENT + ","
+            + " " + Article.SELECT_TABLE + "." + Article.CLMN_ARTICLE_DATE + " AS " + Article.CLMN_ARTICLE_DATE + ","
             + " NEWS_EDITS.DATE AS " + Article.CLMN_EDIT_DATE
             + " FROM " + User.SELECT_TABLE + " U1 "
             + " INNER JOIN " + Article.SELECT_TABLE
@@ -87,7 +87,7 @@ public class Article extends ActiveRecord implements DBDeletable, DBInsertable, 
                 + " AND NE1.DATE = NE2.DATE"
             + " ) AS NEWS_EDITS "
             + " ON " + Article.SELECT_TABLE + "." + Article.CLMN_ID + " = NEWS_EDITS.ARTICLE"
-            + " LEFT JOIN " + User.SELECT_TABLE + " U2 ON NEWS_EDITS." + Article.CLMN_EDITOR + " = U2.ID;";
+            + " LEFT JOIN " + User.SELECT_TABLE + " U2 ON NEWS_EDITS." + Article.CLMN_EDITOR + " = U2.ID";
     
     //Attributes
     private int id;

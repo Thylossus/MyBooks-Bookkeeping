@@ -54,6 +54,7 @@ public class AuthenticationMenu {
             MenuItem user = new MenuItem();
             Date lastSignInDate = new Date();
             lastSignInDate.setCalendar(this.activeUser.getLastSignInDate());
+            lastSignInDate.setFormat("yyyy-MM-dd HH:mm");
             
             user.setLabel(this.activeUser.getFirstname() 
                     + " " + this.activeUser.getLastname()

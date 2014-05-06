@@ -19,6 +19,9 @@ package commands.blog;
 
 import commands.Command;
 import controller.ScopeHandler;
+import database.Article;
+import database.DBFilter;
+import database.SQLConstraintOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +54,8 @@ public class Articles extends Command{
     @Override
     public String execute() {        
     
+        ScopeHandler.getInstance().store(this.request, "articles", Article.findAll());
+        
         ScopeHandler.getInstance().store(this.request, "title", "Article Management");
         
         try {

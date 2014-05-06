@@ -103,6 +103,7 @@ public class CreateMainMenu extends ModelComponent {
                 Menu articleSubmenu = new Menu();
                 articleSubmenu.addItem("Article Management", mainMenu.getBaseURL() + "/blog/articles");
                 articleSubmenu.addItem("Write Article", mainMenu.getBaseURL() + "/blog/writearticle");
+                articleSubmenu.getMenuItems().get(1).setDisabled();
 
                 mainMenu.addItem("Articles", articleSubmenu.getMenuItems());
                 if (this.activeUser.getUserType() == UserType.ADMINISTRATOR) {
